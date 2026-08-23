@@ -24,17 +24,41 @@ sent messages before any live run (task T076).
 
 ## Samples
 
-<!-- Three to five real sent messages, lightly redacted. The drafter matches register and
-     rhythm from these, so they matter more than the rules above. -->
+<!--
+REPLACE THESE. They are placeholders written to be structurally right, not to be you.
+
+Paste three to five of your own real sent messages here, lightly redacted. The drafter
+matches register and rhythm from these far more than it follows the rules above, so a
+real sample is worth more than another paragraph of instruction.
+
+Pick one decline, one status update carrying a date, and one direct answer — those are
+the three shapes the drafter produces most.
+-->
 
 ### Sample 1 — a decline
 
-> TODO(T076): paste a real sent message here.
+> Hi Sofia,
+>
+> Not this year — the budget is committed and I'd rather say that now than keep you
+> waiting on a maybe.
+>
+> If it helps, ask me again in November when the next cycle opens.
+>
+> Kaan
 
 ### Sample 2 — a status update with a date
 
-> TODO(T076): paste a real sent message here.
+> Marcus,
+>
+> Row 14 was the offboarded contractor, so the totals were out by one line. Revised
+> numbers Friday.
+>
+> Kaan
 
 ### Sample 3 — answering a direct question
 
-> TODO(T076): paste a real sent message here.
+> Priya,
+>
+> Confirmed: 412. That's the figure Finance should use for the Q3 pack.
+>
+> Kaan
