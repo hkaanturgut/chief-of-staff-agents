@@ -40,7 +40,22 @@ def login() -> None:
     Run this within 30 minutes of any demonstration. An expired token is the single most
     likely way a live run fails.
     """
-    raise typer.Exit(_todo("login", "T021-T023"))
+    from cos.graph.auth import GraphAuthError, from_settings
+
+    auth = from_settings()
+
+    existing = auth.signed_in_account()
+    if existing and auth.acquire_silent():
+        typer.echo(f"Already signed in as {existing}. Token is valid.")
+        return
+
+    try:
+        auth.login(prompt=lambda message: typer.echo(message))
+    except GraphAuthError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+
+    typer.echo(f"Signed in as {auth.signed_in_account()}.")
 
 
 @app.command()

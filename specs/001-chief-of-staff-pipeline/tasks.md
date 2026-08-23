@@ -72,17 +72,17 @@ commitment appears, "soon-ish" yields no due date, and the polite-but-empty emai
 
 ### Graph access and normalisation
 
-- [ ] T021 [US1] Implement `src/cos/graph/auth.py`: MSAL `PublicClientApplication` device-code flow against `GRAPH_TENANT_ID` with a persistent on-disk token cache, plus the confidential-client path for unattended runs. Build the credential explicitly; never inherit the ambient Azure session (R-003)
-- [ ] T022 [US1] Implement `src/cos/graph/client.py`: `httpx` client for Graph v1.0 with exponential backoff honouring `Retry-After` on 429 and 503, delta-query support for mail, and an injectable transport so fixtures replace the network without monkey-patching (R-004)
-- [ ] T023 [US1] Wire `cos login` in `src/cos/cli.py` to the device-code flow, and add `scripts/auth_login.py` as a thin wrapper
-- [ ] T024 [P] [US1] Implement `src/cos/sources/mail.py`: window resolution per D-008, retrieval, HTML-to-text stripping done once, and normalisation to `MailMessage` including `is_from_operator`
+- [x] T021 [US1] Implement `src/cos/graph/auth.py`: MSAL `PublicClientApplication` device-code flow against `GRAPH_TENANT_ID` with a persistent on-disk token cache, plus the confidential-client path for unattended runs. Build the credential explicitly; never inherit the ambient Azure session (R-003)
+- [x] T022 [US1] Implement `src/cos/graph/client.py`: `httpx` client for Graph v1.0 with exponential backoff honouring `Retry-After` on 429 and 503, delta-query support for mail, and an injectable transport so fixtures replace the network without monkey-patching (R-004)
+- [x] T023 [US1] Wire `cos login` in `src/cos/cli.py` to the device-code flow, and add `scripts/auth_login.py` as a thin wrapper
+- [x] T024 [P] [US1] Implement `src/cos/sources/mail.py`: window resolution per D-008, retrieval, HTML-to-text stripping done once, and normalisation to `MailMessage` including `is_from_operator`
 - [ ] T025 [P] [US1] Implement `src/cos/sources/chat.py`: retrieval and normalisation to `ChatMessage`, populating `preceding_context` with the prior N messages so implicit asks can be resolved rather than guessed
-- [ ] T026 [P] [US1] Implement `src/cos/sources/calendar.py`: today plus two business days, normalisation to `CalendarEvent`, retaining invite bodies because they carry asks
-- [ ] T027 [US1] Implement `src/cos/sources/refs.py`: `SourceRef` construction from each boundary model, including deep-link assembly and excerpt truncation on a word boundary at 240 characters
+- [x] T026 [P] [US1] Implement `src/cos/sources/calendar.py`: today plus two business days, normalisation to `CalendarEvent`, retaining invite bodies because they carry asks
+- [x] T027 [US1] Implement `src/cos/sources/refs.py`: `SourceRef` construction from each boundary model, including deep-link assembly and excerpt truncation on a word boundary at 240 characters
 - [ ] T028 [US1] Wire `cos brief --raw` to print normalised source objects, proving auth and retrieval end to end
 - [ ] T029 [US1] Implement `scripts/record_fixtures.py`: capture live Graph responses, redact at capture time per R-010 using a stable pseudonym mapping, and key each by a hash of method, path, and sorted query parameters
-- [ ] T030 [US1] Implement the replay transport in `tests/conftest.py`, resolving fixtures from disk and **failing loudly on a cache miss**, so an accidental live call in CI is a test failure rather than a silent pass
-- [ ] T031 [P] [US1] Write `tests/test_sources.py`: normalisation from recorded fixtures, window boundary behaviour including the weekend extension, and the timezone-aware requirement
+- [x] T030 [US1] Implement the replay transport in `tests/conftest.py`, resolving fixtures from disk and **failing loudly on a cache miss**, so an accidental live call in CI is a test failure rather than a silent pass
+- [x] T031 [P] [US1] Write `tests/test_sources.py`: normalisation from recorded fixtures, window boundary behaviour including the weekend extension, and the timezone-aware requirement
 
 ### Agent definitions and the single call path
 
