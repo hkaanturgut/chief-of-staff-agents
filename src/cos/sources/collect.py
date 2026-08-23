@@ -14,6 +14,7 @@ from cos.logging import get_logger
 from cos.manifest import RunRecorder
 from cos.models import CalendarEvent, ChatMessage, MailMessage
 from cos.sources import calendar as calendar_source
+from cos.sources import chat as chat_source
 from cos.sources import mail as mail_source
 from cos.sources.window import Window
 
@@ -42,6 +43,7 @@ def collect(
     sources: list[str],
     operator_address: str | None = None,
     recorder: RunRecorder | None = None,
+    chat_enabled: bool = False,
 ) -> SourceBundle:
     bundle = SourceBundle(window=window)
 
@@ -55,11 +57,17 @@ def collect(
             elif name == "calendar":
                 bundle.events = calendar_source.fetch(client, window)
             elif name == "chat":
-                # Consumer Microsoft accounts do not expose Teams chat through Graph, and
-                # an application identity needs protected-API approval. Either way the
-                # brief must say chat is missing rather than quietly under-reporting.
-                # See research.md R-012 and docs/decisions.md B-001.
-                raise GraphError(501, "/chats", "Teams chat is unavailable for this account")
+                # `chat_source.fetch` is implemented and correct. It is not reachable
+                # here because a consumer Microsoft account does not expose Teams chat
+                # through Graph, and an application identity needs protected-API
+                # approval. Attempting it produces a 401 that reads like a bug; failing
+                # deliberately produces a brief that says chat is missing.
+                #
+                # Set `chat_enabled: true` in settings once pointed at a work tenant with
+                # delegated auth. See research.md R-012 and docs/decisions.md B-001.
+                if not chat_enabled:
+                    raise GraphError(501, "/chats", "Teams chat is unavailable for this account")
+                bundle.chat = chat_source.fetch(client, window, operator_address=operator_address)
             else:
                 raise ValueError(f"unknown source: {name}")
         except (GraphError, ValueError) as exc:

@@ -302,3 +302,69 @@ def test_a_missing_fixture_fails_loudly(replay: Any) -> None:
     c = GraphClient(auth=StaticToken(), transport=replay, sleep=lambda _: None)
     with pytest.raises(FixtureMiss, match="no recorded response"):
         c.get("/me/messages")
+
+
+# ======================================================================================
+# chat normalisation — implemented and unused, so it must not rot while it waits
+# ======================================================================================
+
+
+def chat_payload(**overrides: Any) -> dict[str, Any]:
+    payload: dict[str, Any] = {
+        "id": "1724000000000",
+        "createdDateTime": "2026-08-25T14:02:00Z",
+        "from": {
+            "user": {
+                "displayName": "Priya Raman",
+                "email": "priya@demo.example",
+                "userPrincipalName": "priya@demo.example",
+            }
+        },
+        "body": {"contentType": "html", "content": "<p>any luck on that renewal figure?</p>"},
+        "webLink": "https://teams.microsoft.com/l/message/19:abc/1724000000000",
+    }
+    payload.update(overrides)
+    return payload
+
+
+def test_chat_normalises_and_strips_markup() -> None:
+    from cos.sources import chat as chat_source
+
+    message = chat_source.normalise(chat_payload(), chat_id="19:abc")
+    assert message is not None
+    assert message.body_text == "any luck on that renewal figure?"
+    assert message.chat_id == "19:abc"
+
+
+def test_a_system_message_with_no_user_is_dropped() -> None:
+    """Joins, renames, and reactions are not asks."""
+    from cos.sources import chat as chat_source
+
+    assert chat_source.normalise(chat_payload(**{"from": {}}), chat_id="19:abc") is None
+
+
+def test_an_empty_chat_message_is_dropped() -> None:
+    from cos.sources import chat as chat_source
+
+    payload = chat_payload(body={"contentType": "html", "content": "<p></p>"})
+    assert chat_source.normalise(payload, chat_id="19:abc") is None
+
+
+def test_preceding_context_is_carried() -> None:
+    """Without it there is no honest way to resolve 'can you take a look?'."""
+    from cos.sources import chat as chat_source
+
+    message = chat_source.normalise(
+        chat_payload(), chat_id="19:abc", preceding=["Sam Ito: pushed the deck"]
+    )
+    assert message is not None
+    assert message.preceding_context == ["Sam Ito: pushed the deck"]
+
+
+def test_operator_authored_chat_is_flagged() -> None:
+    from cos.sources import chat as chat_source
+
+    message = chat_source.normalise(
+        chat_payload(), chat_id="19:abc", operator_address="PRIYA@demo.example"
+    )
+    assert message is not None and message.is_from_operator

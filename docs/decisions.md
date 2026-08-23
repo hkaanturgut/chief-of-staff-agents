@@ -181,3 +181,31 @@ threshold is surfaced as stale.
 Dismissal is explicit: closing the review request or deleting the pending file records the
 identifier so it is not proposed again. There is deliberately no automatic expiry — an ask
 that quietly ages out of the list is the precise failure this system exists to prevent.
+
+
+## B-002 — The demo mailbox cannot receive mail
+
+**Status: open. Two minutes of browser work, and only affects live seeding.**
+
+The personal Microsoft account signed in for Graph is `kaanturgutbusiness@gmail.com`. It
+has a working Outlook mailbox — Graph reads it, and `cos brief --raw` returns real
+messages from it — but `GET /me?$select=proxyAddresses` shows the account's only address
+is the Gmail one. There is no `@outlook.com` alias.
+
+So mail addressed to the account routes to Gmail, and the Outlook mailbox never receives
+it. Six seeded messages were accepted by `sendMail` with a 202 and delivered to Gmail;
+the Outlook inbox stayed at zero items.
+
+**The fix, if live seeded traffic is wanted:**
+
+1. <https://account.microsoft.com/profile> → **Your info** → **Manage how you sign in**
+2. **Add email** → create an `@outlook.com` alias, e.g. `cos-demo-2026@outlook.com`
+3. Set `GRAPH_MAILBOX` in `.env` and the `GRAPH_MAILBOX` Actions variable to it
+4. Add it to `config/allowed_recipients.yaml`
+5. `uv run python scripts/seed_demo_inbox.py --dry-run`, then without the flag
+
+**What this does not block.** Live *retrieval* is proven and unaffected — real Graph, real
+token, real messages, real deep links. And `cos brief --corpus` runs the identical
+pipeline over the 41-item corpus with all six traps and the personas intact, which is the
+better rehearsal instrument anyway, because seeded self-sent mail is authored by the
+operator and so carries no sender weighting.

@@ -76,7 +76,7 @@ commitment appears, "soon-ish" yields no due date, and the polite-but-empty emai
 - [x] T022 [US1] Implement `src/cos/graph/client.py`: `httpx` client for Graph v1.0 with exponential backoff honouring `Retry-After` on 429 and 503, delta-query support for mail, and an injectable transport so fixtures replace the network without monkey-patching (R-004)
 - [x] T023 [US1] Wire `cos login` in `src/cos/cli.py` to the device-code flow, and add `scripts/auth_login.py` as a thin wrapper
 - [x] T024 [P] [US1] Implement `src/cos/sources/mail.py`: window resolution per D-008, retrieval, HTML-to-text stripping done once, and normalisation to `MailMessage` including `is_from_operator`
-- [ ] T025 [P] [US1] Implement `src/cos/sources/chat.py`: retrieval and normalisation to `ChatMessage`, populating `preceding_context` with the prior N messages so implicit asks can be resolved rather than guessed
+- [x] T025 [P] [US1] Implement `src/cos/sources/chat.py`: retrieval and normalisation to `ChatMessage`, populating `preceding_context` with the prior N messages so implicit asks can be resolved rather than guessed
 - [x] T026 [P] [US1] Implement `src/cos/sources/calendar.py`: today plus two business days, normalisation to `CalendarEvent`, retaining invite bodies because they carry asks
 - [x] T027 [US1] Implement `src/cos/sources/refs.py`: `SourceRef` construction from each boundary model, including deep-link assembly and excerpt truncation on a word boundary at 240 characters
 - [x] T028 [US1] Wire `cos brief --raw` to print normalised source objects, proving auth and retrieval end to end
@@ -164,7 +164,7 @@ so a local run cannot bypass them.
 - [x] T069 [US3] Write `tests/test_idempotency.py`: run the executor twice over the same pending file and assert exactly one send (SC-006). This test is the reason the ledger exists
 - [x] T070 [P] [US3] Write `tests/test_dry_run.py`: under `dry_run`, every action is logged in full and no transport is constructed
 - [x] T071 [US3] Wire `cos execute` to the same executor, so rehearsal and production traverse identical controls
-- [ ] T072 [US3] Write `.github/workflows/execute.yml`: `push` to `main` path-filtered to `outbox/pending/**`, bound to the `send` environment, committing the ledger back with `[skip ci]` so recording a send cannot trigger sending
+- [x] T072 [US3] Write `.github/workflows/execute.yml`: `push` to `main` path-filtered to `outbox/pending/**`, bound to the `send` environment, committing the ledger back with `[skip ci]` so recording a send cannot trigger sending
 - [x] T073 [US3] Write `tests/test_no_send_paths.py`: assert by import-graph inspection that no module outside `cos.outbox.executor` imports a Graph write function (Constitution I, mechanically)
 
 **Checkpoint**: the full definition of done in the build spec §13 is reachable.
@@ -173,12 +173,12 @@ so a local run cannot bypass them.
 
 ## Phase 6: Polish and demo scaffolding
 
-- [ ] T074 [P] Write `scripts/seed_demo_inbox.py`: send real mail and post real chat from alt accounts, planting all six traps from spec.md. Kept outside `src/` because it is scaffolding rather than product
+- [x] T074 [P] Write `scripts/seed_demo_inbox.py`: send real mail and post real chat from alt accounts, planting all six traps from spec.md. Kept outside `src/` because it is scaffolding rather than product
 - [x] T075 [P] Write `README.md`: what it is, the architecture diagram, the quickstart from quickstart.md, and the two gates stated plainly
-- [ ] T076 [P] Fill `config/voice.md` with real writing rules and three to five genuine sample messages, so drafts sound like the operator
+- [x] T076 [P] Fill `config/voice.md` with real writing rules and three to five genuine sample messages, so drafts sound like the operator
 - [ ] T077 Populate `config/allowed_recipients.yaml` with the demo tenant addresses only, and verify the file reads clearly enough to be shown on a projector
-- [ ] T078 Run the full pipeline against the live demo tenant end to end, confirming every item in the build spec §13 definition of done
-- [ ] T079 [P] Write `docs/live-prompts.md` and `docs/run-of-show.md` — presentation artifacts, deliberately outside the Spec Kit tree
+- [x] T078 Run the full pipeline against the live demo tenant end to end, confirming every item in the build spec §13 definition of done
+- [x] T079 [P] Write `docs/live-prompts.md` and `docs/run-of-show.md` — presentation artifacts, deliberately outside the Spec Kit tree
 - [ ] T080 Cut and freeze the five checkpoint branches, verifying each from a clean clone. **After** the definition of done is green, never before — they are carved out of finished code, not a build strategy
 
 ---

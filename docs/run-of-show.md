@@ -3,7 +3,7 @@
 | Time | Beat | On screen |
 |---|---|---|
 | 0:00–2:30 | **The problem.** Monday morning, three tools, the same ask three times. | One image. No bullets. |
-| 2:30–5:00 | **`ckpt-1-naive` runs live.** One prompt, all the context. It is confidently wrong: three to-dos for one ask, the buried commitment missed, a deadline invented from "soon-ish". Name each error as it appears. | Terminal |
+| 2:30–5:00 | **`ckpt-1-naive --twice` runs live.** One prompt, all the context. The output looks *good* — that is the hook. Then run it again: six to-dos becomes eight, and the renewal ask that was merged with the cancel request in run one splits in run two. No provenance, no stable ids, no clean diff, nothing to gate on. | Terminal |
 | 5:00–7:00 | **Architecture.** Why specialists. Why the orchestrator routes ingest and code routes everything after. | One slide |
 | 7:00–14:00 | **Build the consolidator live.** Two prompts from `docs/live-prompts.md`. Include the moment Copilot reaches for a model to do the clustering, and fix it by hand. Land the line. Re-run: the triple collapses. | VS Code + terminal |
 | 14:00–19:00 | **Build the approval step.** Drafts to `outbox/pending/`, branch, pull request. Open it. Edit a draft in the web editor. Show the diff. | Browser |
@@ -40,6 +40,12 @@ Do not hide these. They are the most credible three minutes of the talk.
   Visual Studio benefit; an Azure-created directory has no commerce backend and refuses
   consumer identities; the work tenant blocks app registration outright. What finally
   worked was a consumer-only app registration and a personal Microsoft account.
+- **The naive baseline is not obviously wrong**, which is the most useful thing found
+  while building this. A 2026 strong model given one prompt and all the context produces
+  a plausible list — it usually finds the buried commitment and usually refuses the fake
+  deadline. What it cannot do is cite anything, avoid merging two opposite asks into one,
+  or give the same answer twice. The argument for the architecture is not accuracy. It is
+  verifiability and repeatability.
 - **Three bugs only appeared once real output existed.** Every deadline was silently
   dropped because models return dates without an offset. Fifteen inert notices bundled
   into a to-do that outranked real work. Sender importance was configured by address and
