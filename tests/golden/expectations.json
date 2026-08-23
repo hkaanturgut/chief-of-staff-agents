@@ -1,0 +1,40 @@
+{
+  "_comment": "What a correct run over demo/corpus.json must achieve. Scored, not asserted for equality — the consolidator is model-backed and its wording will vary. What must not vary is whether it found the right things.",
+  "thresholds": {
+    "dedup_recall": 1.0,
+    "false_merge_rate": 0.25,
+    "buried_commitment_recall": 1.0,
+    "invented_deadlines": 0,
+    "noise_todos_max": 4
+  },
+  "traps": {
+    "triple": {
+      "description": "One ask arriving as two mails, a chat, and a calendar invite body.",
+      "must_merge_sources": ["m01", "m02", "c01", "e01"],
+      "min_sources": 3
+    },
+    "buried_commitment": {
+      "description": "The operator promised revised numbers by Friday, deep in a thread.",
+      "must_include_source": "m13"
+    },
+    "invented_deadline": {
+      "description": "A chat message says 'soon-ish'. Nothing may carry a date from it.",
+      "source": "c02",
+      "must_have_no_due": true
+    },
+    "polite_trap": {
+      "description": "Loud newsletter, asks nothing. Must rank below anything real.",
+      "source": "m20",
+      "must_rank_below_sources": ["m01", "m13", "m30"]
+    },
+    "high_risk": {
+      "description": "An overdue invoice for real money from an external party.",
+      "source": "m30",
+      "must_outrank_sources": ["m20", "m54"]
+    },
+    "split": {
+      "description": "Dana's 'cancel it entirely' shares a thread with Priya's ask.",
+      "sources_that_must_not_merge": [["m01", "m03"]]
+    }
+  }
+}

@@ -1,0 +1,63 @@
+name: brief
+
+# Runs the pipeline and opens a pull request. This workflow has NO path to an outbound
+# action — sending lives in execute.yml, behind the `send` environment.
+
+on:
+  schedule:
+    # 06:30 UTC on weekdays: 02:30 Toronto, so the brief is waiting before the day starts.
+    - cron: "30 6 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: "Override the lookback window, in hours"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: brief
+  cancel-in-progress: false
+
+jobs:
+  brief:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - run: uv sync --frozen
+
+      # OIDC federated credential. No client secret is stored anywhere in this repo.
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Run the pipeline and open a pull request
+        env:
+          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+          FOUNDRY_PROJECT_ENDPOINT: ${{ vars.FOUNDRY_PROJECT_ENDPOINT }}
+          GRAPH_CLIENT_ID: ${{ vars.GRAPH_CLIENT_ID }}
+          GRAPH_MAILBOX: ${{ vars.GRAPH_MAILBOX }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # An unattended run has no delegated Graph token — device code needs a human.
+          # So the scheduled brief runs against the committed corpus, and says so.
+          # See docs/decisions.md B-001: consumer accounts have no application-permission
+          # path, and the tenant that would provide one does not exist.
+          uv run cos propose --corpus ${{ inputs.hours && format('--hours {0}', inputs.hours) || '' }}

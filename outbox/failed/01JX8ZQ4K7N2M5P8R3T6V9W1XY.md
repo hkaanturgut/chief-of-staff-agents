@@ -4,7 +4,7 @@ todo_id: 01JX7YP3J6M1L4N7Q2S5U8V0WX
 kind: send_mail
 risk: low
 status: blocked
-generated_at: '2026-08-23T14:36:17.053139+00:00'
+generated_at: '2026-08-23T14:40:02.618000+00:00'
 run_id: ''
 model: ''
 model_version: ''
@@ -24,7 +24,7 @@ sources:
   author_address: null
   timestamp: '2026-08-26T09:00:00Z'
   excerpt: ''
-failed_at: '2026-08-23T14:36:17.053106+00:00'
+failed_at: '2026-08-23T14:40:02.617973+00:00'
 error: '01JX8ZQ4K7N2M5P8R3T6V9W1XY: recipients not on the allowlist: stranger@elsewhere.example.
   Add them to config/allowed_recipients.yaml, deliberately.'
 ---

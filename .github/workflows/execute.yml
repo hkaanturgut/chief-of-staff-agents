@@ -1,0 +1,87 @@
+name: execute
+
+# THE SECOND GATE.
+#
+# Merging a pull request stages the actions. This workflow does not perform them until a
+# named reviewer approves the `send` environment. Neither gate alone is sufficient, and
+# no other workflow, script, or CLI path may perform an outbound action.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "outbox/pending/**"
+
+permissions:
+  contents: write
+  issues: write
+  id-token: write
+
+concurrency:
+  group: execute
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    # The gate. A required reviewer on this environment means the job halts here and
+    # sends nothing until a human clicks approve.
+    environment: send
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - run: uv sync --frozen
+
+      - name: Show the controls before doing anything
+        run: |
+          echo "::group::allowed_recipients.yaml"
+          cat config/allowed_recipients.yaml
+          echo "::endgroup::"
+          echo "::group::run settings"
+          grep -A3 '^run:' config/settings.yaml
+          echo "::endgroup::"
+          echo "Pending:"
+          ls -1 outbox/pending/ || true
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Execute
+        id: execute
+        env:
+          GRAPH_CLIENT_ID: ${{ vars.GRAPH_CLIENT_ID }}
+          GRAPH_MAILBOX: ${{ vars.GRAPH_MAILBOX }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: uv run cos execute --yes
+
+      - name: Record the outcome
+        if: always()
+        run: |
+          git config user.name "Chief of Staff"
+          git config user.email "chief-of-staff@users.noreply.github.com"
+          git add state/ledger.json outbox/ || true
+          # [skip ci] so that recording a send cannot trigger the workflow that sends.
+          git diff --cached --quiet || git commit -m "chore: record executed actions [skip ci]"
+          git push || true
+
+      - name: Open an issue for anything that failed
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "Execution failed for run ${{ github.run_id }}" \
+            --body "One or more actions failed. Files are in \`outbox/failed/\`.
+
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --label "execution-failure" || true

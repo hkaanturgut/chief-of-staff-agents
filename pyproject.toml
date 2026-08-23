@@ -92,7 +92,9 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q --strict-markers"
+# `live` needs a tenant, a network, and real model calls. Excluded by default so
+# the everyday suite stays offline and fast; run it with `pytest -m live`.
+addopts = "-q --strict-markers -m 'not live'"
 asyncio_mode = "auto"
 markers = [
     "live: requires a real tenant and network. Excluded from CI by default.",
