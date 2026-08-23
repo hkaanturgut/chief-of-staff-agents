@@ -169,17 +169,183 @@ def _print_signals(signals: Sequence[object]) -> None:
 
 
 @app.command()
-def propose() -> None:
+def propose(
+    hours: Annotated[
+        int | None, typer.Option("--hours", help="Override the lookback window.")
+    ] = None,
+    no_pr: Annotated[
+        bool, typer.Option("--no-pr", help="Write proposals but do not open a PR.")
+    ] = False,
+    corpus: Annotated[
+        bool, typer.Option("--corpus", help="Run against the committed demo corpus.")
+    ] = False,
+) -> None:
     """Draft the actions, write outbox/pending/, and open a pull request. Sends nothing."""
-    raise typer.Exit(_todo("propose", "T061"))
+    import asyncio
+    from datetime import UTC, datetime
+
+    from azure.identity.aio import AzureCliCredential
+
+    from cos import brief as brief_doc
+    from cos.agents import definitions
+    from cos.agents.runner import AgentRunner
+    from cos.draft.drafter import draft_all
+    from cos.manifest import RunRecorder
+    from cos.models import ProposedAction
+    from cos.outbox import pr, writer
+    from cos.pipeline import operator_label, run_brief
+    from cos.settings import load_environment, load_important_senders, load_settings
+
+    settings = load_settings()
+    env = load_environment()
+    now = datetime.now(UTC)
+
+    bundle_override = None
+    operator_override = None
+    auth = None
+    if corpus:
+        from cos.corpus import load as load_corpus
+
+        bundle_override, now, operator_override = load_corpus()
+    else:
+        from cos.graph.auth import GraphAuthError, from_settings
+
+        try:
+            auth = from_settings()
+            auth.token()
+        except GraphAuthError as exc:
+            typer.echo(str(exc), err=True)
+            raise typer.Exit(1) from exc
+
+    result = asyncio.run(
+        run_brief(
+            settings=settings,
+            env=env,
+            senders=load_important_senders(),
+            auth=auth,
+            lookback_hours=hours,
+            now=now,
+            bundle_override=bundle_override,
+            operator_override=operator_override,
+        )
+    )
+
+    brief_text = brief_doc.write(result.todos, result.manifest, settings.staleness)
+
+    env.require("foundry_project_endpoint", "azure_tenant_id")
+    endpoint = env.foundry_project_endpoint
+    tenant = env.azure_tenant_id
+    assert endpoint and tenant
+    agents = definitions.load_all()
+    recorder = RunRecorder(
+        run_id=result.manifest.run_id,
+        window_start=result.manifest.window_start,
+        window_end=result.manifest.window_end,
+        dry_run=settings.run.dry_run,
+    )
+
+    async def _draft() -> tuple[list[ProposedAction], int]:
+        async with (
+            AzureCliCredential(tenant_id=tenant) as credential,
+            AgentRunner(
+                project_endpoint=endpoint,
+                credential=credential,
+                recorder=recorder,
+            ) as runner,
+        ):
+            return await draft_all(
+                runner,
+                agents["drafter"],
+                agents["drafter"].model_tier(settings.models),
+                result.todos,
+                operator=operator_label(env, operator_override),
+                repo=settings.github.repo,
+                now=now,
+                max_actions=settings.run.max_actions_per_run,
+            )
+
+    actions, skipped = asyncio.run(_draft())
+
+    if not actions:
+        # An empty pull request is noise (FR-027).
+        typer.echo("No actions proposed. No pull request opened.")
+        return
+
+    paths = writer.write_all(
+        actions,
+        run_id=result.manifest.run_id,
+        model=settings.models.strong.deployment,
+        model_version=settings.models.strong.version,
+        generated_at=now,
+    )
+    for path, action in zip(paths, actions, strict=True):
+        typer.echo(f"  {action.risk:6} {action.kind:14} {path.name}")
+
+    typer.echo(f"\n{len(actions)} proposal(s) written to outbox/pending/")
+
+    if no_pr:
+        typer.echo("--no-pr: stopping before the pull request.")
+        return
+
+    request = pr.open_pull_request(
+        settings=settings.github,
+        manifest=result.manifest,
+        actions=actions,
+        brief=brief_text,
+        skipped=skipped,
+        paths=paths,
+        when=now,
+    )
+    typer.echo(f"\nPull request: {request.url}")
+    typer.echo("Nothing is sent until it is merged AND the `send` environment approved.")
 
 
 @app.command()
 def execute(
-    yes: Annotated[bool, typer.Option("--yes", help="Skip the local confirmation prompt.")] = False,
+    yes: Annotated[bool, typer.Option("--yes", help="Skip the local confirmation.")] = False,
 ) -> None:
     """Perform approved actions. Honours dry-run, the allowlist, the ledger, and the cap."""
-    raise typer.Exit(_todo("execute", "T071"))
+    from cos.graph.auth import from_settings
+    from cos.graph.client import GraphClient
+    from cos.outbox import writer
+    from cos.outbox.executor import Executor, execute_pending
+    from cos.outbox.ledger import LedgerFile
+    from cos.settings import load_allowed_recipients, load_settings
+
+    settings = load_settings()
+    allowed = load_allowed_recipients()
+
+    pending = sorted(writer.PENDING.glob("*.md"))
+    if not pending:
+        typer.echo("Nothing pending.")
+        return
+
+    mode = "DRY RUN" if settings.run.dry_run else "LIVE — actions will really be performed"
+    typer.echo(f"{len(pending)} pending action(s). Mode: {mode}")
+    typer.echo(
+        f"Allowlist: {len(allowed.addresses)} address(es), "
+        f"{len(allowed.domains)} domain(s), {len(allowed.repos)} repo(s)"
+    )
+
+    if not settings.run.dry_run and not yes:
+        typer.confirm("Perform these actions for real?", abort=True)
+
+    executor = Executor(
+        run=settings.run,
+        allowed=allowed,
+        ledger=LedgerFile(),
+        client_factory=lambda: GraphClient(auth=from_settings()),
+    )
+    try:
+        report = execute_pending(executor)
+    finally:
+        executor.close()
+
+    for outcome in report.outcomes:
+        typer.echo(f"  {outcome.status:8} {outcome.action_id}  {outcome.detail[:70]}")
+    typer.echo(f"\n{len(report.sent)} performed, {len(report.failed)} failed.")
+    if report.failed:
+        raise typer.Exit(1)
 
 
 @app.command()

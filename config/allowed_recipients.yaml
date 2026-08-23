@@ -12,9 +12,17 @@
 # approval and the dry-run default.
 
 # Exact addresses. Case-insensitive.
-addresses: []
-# - demo-alt-1@example.onmicrosoft.com
-# - demo-alt-2@example.onmicrosoft.com
+addresses:
+  # The operator's own mailbox. Self-send is the only genuinely safe live target for a
+  # demonstration: a real Graph call, a real receipt, a real message arriving on screen,
+  # and nobody else's inbox involved.
+  - kaanturgutbusiness@gmail.com
+
+# The demo corpus uses these fictional addresses. They are deliberately NOT listed —
+# a corpus run must block, because that is what proves the allowlist is load-bearing:
+#   priya@northwind-demo.example
+#   dana@northwind-demo.example
+#   marcus@demo.example
 
 # Whole domains. Use sparingly — a domain entry is a much larger blast radius than an
 # address entry, and the demo tenant should be enumerated address by address.

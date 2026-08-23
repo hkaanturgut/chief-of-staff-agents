@@ -1,8 +1,9 @@
-"""Loading the demo corpus.
+"""The demo corpus.
 
-`tests/golden/corpus.json` holds 41 normalised items carrying all six planted traps. It
-is the input to the consolidator evaluation, and it is what `cos brief --corpus` runs
-against when no live mailbox is available.
+41 normalised items carrying all six planted traps, in `demo/corpus.json`. It exists so
+the whole pipeline can be run, demonstrated, and evaluated with no mailbox at all —
+which is what makes the consolidator evaluation possible in CI, and what makes a
+rehearsal possible on a train.
 
 Normalised rather than raw Graph payloads on purpose: the Graph-to-model layer has its
 own tests, and keeping the corpus at the model level makes the traps readable in a diff.
@@ -15,14 +16,16 @@ from datetime import datetime
 from pathlib import Path
 
 from cos.models import CalendarEvent, ChatMessage, MailMessage
+from cos.settings import REPO_ROOT
 from cos.sources.collect import SourceBundle
 from cos.sources.window import Window
 
-CORPUS_PATH = Path(__file__).parent / "golden" / "corpus.json"
+CORPUS_PATH = REPO_ROOT / "demo" / "corpus.json"
 
 
-def load() -> tuple[SourceBundle, datetime, str]:
-    payload = json.loads(CORPUS_PATH.read_text())
+def load(path: Path | None = None) -> tuple[SourceBundle, datetime, str]:
+    """Return the bundle, the corpus's own "now", and the operator address."""
+    payload = json.loads((path or CORPUS_PATH).read_text())
     now = datetime.fromisoformat(payload["now"])
 
     mail = [MailMessage.model_validate(m) for m in payload["mail"]]
@@ -36,5 +39,8 @@ def load() -> tuple[SourceBundle, datetime, str]:
         calendar_start=min(e.start for e in events),
         calendar_end=max(e.end for e in events),
     )
-    bundle = SourceBundle(window=window, mail=mail, chat=chat, events=events)
-    return bundle, now, str(payload["operator"])
+    return (
+        SourceBundle(window=window, mail=mail, chat=chat, events=events),
+        now,
+        str(payload["operator"]),
+    )

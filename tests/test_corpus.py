@@ -6,7 +6,7 @@ passing for the wrong reason.
 
 from __future__ import annotations
 
-from tests.corpus import load
+from cos.corpus import load
 
 
 def test_corpus_loads_and_validates() -> None:

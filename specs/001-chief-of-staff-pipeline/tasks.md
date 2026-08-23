@@ -126,16 +126,16 @@ pull request that is a genuine review surface.
 pull request opened with one file per action, the brief as its body, and a risk-labelled
 table. Merging is not required.
 
-- [ ] T052 [US2] Write `agents/drafter.yaml`: strong tier, one call per actionable to-do, a required `rationale` naming its sources, and the risk rubric where money, external commitments, and declines are `high`
-- [ ] T053 [US2] Implement `src/cos/draft/voice.py`: load and render `config/voice.md` into the drafter prompt
-- [ ] T054 [US2] Implement `src/cos/draft/drafter.py`: one call per to-do whose `suggested_action` is not `no_action`, skipping anything flagged `needs_human_judgment` (FR-018), and enforcing `max_actions_per_run` as a hard stop that is recorded rather than silent (FR-028)
-- [ ] T055 [P] [US2] Write `tests/test_drafter.py`: no draft is produced for `no_action` or for a human-judgement item; the per-run maximum stops the run and is reported; every draft carries a rationale
-- [ ] T056 [US2] Implement `src/cos/outbox/writer.py`: serialise a `ProposedAction` to `outbox/pending/<action_id>.md` exactly per contracts/proposal-file.md, with a typed `target` block
-- [ ] T057 [US2] Implement `src/cos/outbox/reader.py`: parse a proposal file back to a `ProposedAction`, taking the message body from below the frontmatter, so a human edit is authoritative by construction
-- [ ] T058 [P] [US2] Write `tests/test_proposal_roundtrip.py`: write then read yields an equal object; a hand-edited body survives the round trip; a hand-edited recipient is visible to the reader
-- [ ] T059 [US2] Implement `src/cos/outbox/pr.py`: branch `cos/run-YYYYMMDD-HHMM`, commit the pending files and `BRIEF.md`, push, and open a pull request whose body is the brief plus a risk-labelled action table with the run manifest header
-- [ ] T060 [US2] Add the `high-risk` label when any action is high risk (FR-026), and suppress pull request creation entirely when a run produced no actions (FR-027)
-- [ ] T061 [US2] Wire `cos propose` end to end, and add `scripts/run_pipeline.py` as the thin wrapper the workflow calls
+- [x] T052 [US2] Write `agents/drafter.yaml`: strong tier, one call per actionable to-do, a required `rationale` naming its sources, and the risk rubric where money, external commitments, and declines are `high`
+- [x] T053 [US2] Implement `src/cos/draft/voice.py`: load and render `config/voice.md` into the drafter prompt
+- [x] T054 [US2] Implement `src/cos/draft/drafter.py`: one call per to-do whose `suggested_action` is not `no_action`, skipping anything flagged `needs_human_judgment` (FR-018), and enforcing `max_actions_per_run` as a hard stop that is recorded rather than silent (FR-028)
+- [x] T055 [P] [US2] Write `tests/test_drafter.py`: no draft is produced for `no_action` or for a human-judgement item; the per-run maximum stops the run and is reported; every draft carries a rationale
+- [x] T056 [US2] Implement `src/cos/outbox/writer.py`: serialise a `ProposedAction` to `outbox/pending/<action_id>.md` exactly per contracts/proposal-file.md, with a typed `target` block
+- [x] T057 [US2] Implement `src/cos/outbox/reader.py`: parse a proposal file back to a `ProposedAction`, taking the message body from below the frontmatter, so a human edit is authoritative by construction
+- [x] T058 [P] [US2] Write `tests/test_proposal_roundtrip.py`: write then read yields an equal object; a hand-edited body survives the round trip; a hand-edited recipient is visible to the reader
+- [x] T059 [US2] Implement `src/cos/outbox/pr.py`: branch `cos/run-YYYYMMDD-HHMM`, commit the pending files and `BRIEF.md`, push, and open a pull request whose body is the brief plus a risk-labelled action table with the run manifest header
+- [x] T060 [US2] Add the `high-risk` label when any action is high risk (FR-026), and suppress pull request creation entirely when a run produced no actions (FR-027)
+- [x] T061 [US2] Wire `cos propose` end to end, and add `scripts/run_pipeline.py` as the thin wrapper the workflow calls
 - [ ] T062 [US2] Write `.github/workflows/brief.yml` per contracts/workflows.md: scheduled and manual, OIDC login with no stored secret, mail and calendar only (R-012), and a brief that states chat was absent
 
 **Checkpoint**: proposals are reviewable and editable in GitHub. Nothing can send yet.
@@ -155,17 +155,17 @@ ledger entry.
 controls, and the controls live in `src/cos/outbox/executor.py` rather than in workflow YAML,
 so a local run cannot bypass them.
 
-- [ ] T063 [US3] Implement `src/cos/outbox/ledger.py`: read `state/ledger.json`, `check_and_reserve(action_id)` as the sole path to a send, and receipt recording with the provider's returned identifier
-- [ ] T064 [US3] Implement the allowlist check in `src/cos/outbox/allowlist.py`, evaluated against the file's **current** `target` at execution time so a human edit is still checked (FR-033), failing before any provider call
-- [ ] T065 [P] [US3] Write `tests/test_allowlist.py`: an unlisted recipient fails without a provider call; a recipient edited into a file after proposal is still checked; domain and exact-address entries both match correctly
-- [ ] T066 [US3] Implement `src/cos/outbox/executor.py`: ordered per contracts/workflows.md — read, allowlist, ledger, per-run maximum, dry-run, perform, receipt. Under `dry_run` it must refuse to construct a live transport at all, rather than merely skipping the call
-- [ ] T067 [US3] Implement the Graph write paths: `sendMail`, `createReply` then send, `POST /me/events`, `POST /chats/{id}/messages`, and the GitHub API path for `create_issue`, each returning the provider identifier for the receipt
-- [ ] T068 [US3] Implement the outcome paths: success moves the file to `outbox/sent/` with `status`, `sent_at`, and `receipt_id`; failure moves it to `outbox/failed/` with the error, opens an issue, and lets the remaining actions continue (FR-035, FR-036)
-- [ ] T069 [US3] Write `tests/test_idempotency.py`: run the executor twice over the same pending file and assert exactly one send (SC-006). This test is the reason the ledger exists
-- [ ] T070 [P] [US3] Write `tests/test_dry_run.py`: under `dry_run`, every action is logged in full and no transport is constructed
-- [ ] T071 [US3] Wire `cos execute` to the same executor, so rehearsal and production traverse identical controls
+- [x] T063 [US3] Implement `src/cos/outbox/ledger.py`: read `state/ledger.json`, `check_and_reserve(action_id)` as the sole path to a send, and receipt recording with the provider's returned identifier
+- [x] T064 [US3] Implement the allowlist check in `src/cos/outbox/allowlist.py`, evaluated against the file's **current** `target` at execution time so a human edit is still checked (FR-033), failing before any provider call
+- [x] T065 [P] [US3] Write `tests/test_allowlist.py`: an unlisted recipient fails without a provider call; a recipient edited into a file after proposal is still checked; domain and exact-address entries both match correctly
+- [x] T066 [US3] Implement `src/cos/outbox/executor.py`: ordered per contracts/workflows.md — read, allowlist, ledger, per-run maximum, dry-run, perform, receipt. Under `dry_run` it must refuse to construct a live transport at all, rather than merely skipping the call
+- [x] T067 [US3] Implement the Graph write paths: `sendMail`, `createReply` then send, `POST /me/events`, `POST /chats/{id}/messages`, and the GitHub API path for `create_issue`, each returning the provider identifier for the receipt
+- [x] T068 [US3] Implement the outcome paths: success moves the file to `outbox/sent/` with `status`, `sent_at`, and `receipt_id`; failure moves it to `outbox/failed/` with the error, opens an issue, and lets the remaining actions continue (FR-035, FR-036)
+- [x] T069 [US3] Write `tests/test_idempotency.py`: run the executor twice over the same pending file and assert exactly one send (SC-006). This test is the reason the ledger exists
+- [x] T070 [P] [US3] Write `tests/test_dry_run.py`: under `dry_run`, every action is logged in full and no transport is constructed
+- [x] T071 [US3] Wire `cos execute` to the same executor, so rehearsal and production traverse identical controls
 - [ ] T072 [US3] Write `.github/workflows/execute.yml`: `push` to `main` path-filtered to `outbox/pending/**`, bound to the `send` environment, committing the ledger back with `[skip ci]` so recording a send cannot trigger sending
-- [ ] T073 [US3] Write `tests/test_no_send_paths.py`: assert by import-graph inspection that no module outside `cos.outbox.executor` imports a Graph write function (Constitution I, mechanically)
+- [x] T073 [US3] Write `tests/test_no_send_paths.py`: assert by import-graph inspection that no module outside `cos.outbox.executor` imports a Graph write function (Constitution I, mechanically)
 
 **Checkpoint**: the full definition of done in the build spec §13 is reachable.
 

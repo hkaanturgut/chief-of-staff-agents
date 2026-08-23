@@ -38,9 +38,13 @@ def test_only_the_executor_calls_graph_write_methods() -> None:
             func = node.func
             if isinstance(func, ast.Attribute) and func.attr in WRITE_METHODS:
                 for arg in node.args:
-                    if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
-                        if any(marker in arg.value for marker in WRITE_PATHS):
-                            offenders.append(f"{relative}: {arg.value}")
+                    is_write_path = (
+                        isinstance(arg, ast.Constant)
+                        and isinstance(arg.value, str)
+                        and any(marker in arg.value for marker in WRITE_PATHS)
+                    )
+                    if is_write_path:
+                        offenders.append(f"{relative}: {arg.value}")
     assert not offenders, (
         "only outbox/executor.py may perform provider writes (Constitution I); found: "
         + ", ".join(offenders)
