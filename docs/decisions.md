@@ -6,7 +6,8 @@ Running log of calls made during the build, and the one thing that needs a human
 
 ## B-001 — BLOCKER: the Azure tenant has no Microsoft 365
 
-**Status: open. Needs Kaan. This is the only item that blocks §6 of the spec.**
+**Status: RESOLVED 2026-08-23.** A personal Microsoft account, no tenant required. Details
+at the end of this entry.
 
 **Update 2026-08-23.** Four routes tried, three closed. Recorded here so nobody spends
 another morning on them.

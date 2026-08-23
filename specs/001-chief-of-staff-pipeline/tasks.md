@@ -79,7 +79,7 @@ commitment appears, "soon-ish" yields no due date, and the polite-but-empty emai
 - [ ] T025 [P] [US1] Implement `src/cos/sources/chat.py`: retrieval and normalisation to `ChatMessage`, populating `preceding_context` with the prior N messages so implicit asks can be resolved rather than guessed
 - [x] T026 [P] [US1] Implement `src/cos/sources/calendar.py`: today plus two business days, normalisation to `CalendarEvent`, retaining invite bodies because they carry asks
 - [x] T027 [US1] Implement `src/cos/sources/refs.py`: `SourceRef` construction from each boundary model, including deep-link assembly and excerpt truncation on a word boundary at 240 characters
-- [ ] T028 [US1] Wire `cos brief --raw` to print normalised source objects, proving auth and retrieval end to end
+- [x] T028 [US1] Wire `cos brief --raw` to print normalised source objects, proving auth and retrieval end to end
 - [ ] T029 [US1] Implement `scripts/record_fixtures.py`: capture live Graph responses, redact at capture time per R-010 using a stable pseudonym mapping, and key each by a hash of method, path, and sorted query parameters
 - [x] T030 [US1] Implement the replay transport in `tests/conftest.py`, resolving fixtures from disk and **failing loudly on a cache miss**, so an accidental live call in CI is a test failure rather than a silent pass
 - [x] T031 [P] [US1] Write `tests/test_sources.py`: normalisation from recorded fixtures, window boundary behaviour including the weekend extension, and the timezone-aware requirement
