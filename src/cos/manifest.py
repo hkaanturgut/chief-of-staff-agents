@@ -111,6 +111,7 @@ class RunRecorder:
             sources_failed=self.sources_failed,
             messages_in=self.counts.get("messages_in", 0),
             signals=self.counts.get("signals", 0),
+            dismissed=self.counts.get("dismissed", 0),
             clusters=self.counts.get("clusters", 0),
             todos=self.counts.get("todos", 0),
             actions=self.counts.get("actions", 0),

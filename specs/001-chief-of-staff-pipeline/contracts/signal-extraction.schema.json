@@ -77,6 +77,18 @@
           "title": "Author",
           "type": "string"
         },
+        "author_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author Address"
+        },
         "excerpt": {
           "default": "",
           "maxLength": 240,

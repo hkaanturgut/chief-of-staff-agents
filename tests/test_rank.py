@@ -222,3 +222,27 @@ def test_earliest_explicit_due_is_carried_forward() -> None:
 def test_no_explicit_due_stays_none() -> None:
     signals = [Signal(type="ask", statement="a", sources=[ref()])]
     assert earliest_explicit_due(signals) is None
+
+
+def test_sender_importance_matches_on_address_not_display_name() -> None:
+    """Configured by address; matching the display name silently never fires.
+
+    That bug ranked a CAD 47,500 overdue invoice at 7 the first time the full corpus ran.
+    """
+    billing = ImportantSenders(
+        senders=[ImportantSender(match="@meridian-demo.example", weight=0.9)]
+    )
+    source = SourceRef(
+        kind="mail",
+        id="m30",
+        author="Meridian Billing",
+        author_address="billing@meridian-demo.example",
+        timestamp=NOW,
+    )
+    assert sender_component([source], billing) == 0.9
+
+
+def test_sender_matching_falls_back_to_author_when_no_address_was_captured() -> None:
+    source = SourceRef(kind="chat", id="c1", author="priya@demo.example", timestamp=NOW)
+    senders = ImportantSenders(senders=[ImportantSender(match="priya@demo.example", weight=1.0)])
+    assert sender_component([source], senders) == 1.0

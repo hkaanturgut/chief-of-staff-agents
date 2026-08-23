@@ -80,20 +80,20 @@ commitment appears, "soon-ish" yields no due date, and the polite-but-empty emai
 - [x] T026 [P] [US1] Implement `src/cos/sources/calendar.py`: today plus two business days, normalisation to `CalendarEvent`, retaining invite bodies because they carry asks
 - [x] T027 [US1] Implement `src/cos/sources/refs.py`: `SourceRef` construction from each boundary model, including deep-link assembly and excerpt truncation on a word boundary at 240 characters
 - [x] T028 [US1] Wire `cos brief --raw` to print normalised source objects, proving auth and retrieval end to end
-- [ ] T029 [US1] Implement `scripts/record_fixtures.py`: capture live Graph responses, redact at capture time per R-010 using a stable pseudonym mapping, and key each by a hash of method, path, and sorted query parameters
+- [x] T029 [US1] Implement `scripts/record_fixtures.py`: capture live Graph responses, redact at capture time per R-010 using a stable pseudonym mapping, and key each by a hash of method, path, and sorted query parameters
 - [x] T030 [US1] Implement the replay transport in `tests/conftest.py`, resolving fixtures from disk and **failing loudly on a cache miss**, so an accidental live call in CI is a test failure rather than a silent pass
 - [x] T031 [P] [US1] Write `tests/test_sources.py`: normalisation from recorded fixtures, window boundary behaviour including the weekend extension, and the timezone-aware requirement
 
 ### Agent definitions and the single call path
 
-- [ ] T032 [US1] Write `agents/mail-triage.yaml`: cheap tier, extraction only, the threaded-repetition rule from FR-008, and instructions forbidding summarising, prioritising, and drafting
-- [ ] T033 [P] [US1] Write `agents/chat-triage.yaml`: cheap tier, referent resolution from `preceding_context` or `ambiguous: true`, and an explicit prohibition on inventing a deadline
-- [ ] T034 [P] [US1] Write `agents/calendar-context.yaml`: cheap tier, `meeting_prep` and `conflict` signals, plus the shape of the day for realistic ranking
-- [ ] T035 [P] [US1] Write `agents/chief-of-staff.yaml`: the orchestrator, declaring the three ingest agents as connected agents and describing when each source is relevant
+- [x] T032 [US1] Write `agents/mail-triage.yaml`: cheap tier, extraction only, the threaded-repetition rule from FR-008, and instructions forbidding summarising, prioritising, and drafting
+- [x] T033 [P] [US1] Write `agents/chat-triage.yaml`: cheap tier, referent resolution from `preceding_context` or `ambiguous: true`, and an explicit prohibition on inventing a deadline
+- [x] T034 [P] [US1] Write `agents/calendar-context.yaml`: cheap tier, `meeting_prep` and `conflict` signals, plus the shape of the day for realistic ranking
+- [x] T035 [P] [US1] Write `agents/chief-of-staff.yaml`: the orchestrator, declaring the three ingest agents as connected agents and describing when each source is relevant
 - [x] T036 [US1] Implement `src/cos/agents/runner.py` — the single model call path: schema-constrained request, in-process Pydantic validation, exactly one retry with the validation error appended, loud failure on the second, and a `ModelCallLog` line written for every attempt (Principles V and VIII)
-- [ ] T037 [US1] Implement `src/cos/agents/provision.py` and `scripts/provision_agents.py`: read `agents/*.yaml`, create or update by name so re-running is idempotent, and wire the connected-agent relationships through `azure-ai-projects`
-- [ ] T038 [US1] Implement `src/cos/agents/connected.py`: orchestrator invocation through `agent-framework`, source selection per request, and manifest population including which sources succeeded and which failed
-- [ ] T039 [US1] Wire `cos brief --signals` to print extracted `Signal` objects with their provenance
+- [x] T037 [US1] Implement `src/cos/agents/provision.py` and `scripts/provision_agents.py`: read `agents/*.yaml`, create or update by name so re-running is idempotent, and wire the connected-agent relationships through `azure-ai-projects`
+- [x] T038 [US1] Implement `src/cos/agents/connected.py`: orchestrator invocation through `agent-framework`, source selection per request, and manifest population including which sources succeeded and which failed
+- [x] T039 [US1] Wire `cos brief --signals` to print extracted `Signal` objects with their provenance
 - [x] T040 [P] [US1] Write `tests/test_runner.py`: the retry fires exactly once on a validation error, the second failure raises, and both attempts are logged
 
 ### Consolidation — the centrepiece
@@ -105,12 +105,12 @@ commitment appears, "soon-ish" yields no due date, and the polite-but-empty emai
 - [x] T045 [US1] Implement `src/cos/consolidate/merge.py`: one call per candidate cluster, merge-or-split decision, merged statement, and assembly of the source union **in code** rather than by the model
 - [x] T046 [US1] Implement `src/cos/consolidate/rank.py`: pure urgency arithmetic from explicit due-date proximity, configured sender weight, and distinct source count, bounded to 0–100 (R-007)
 - [x] T047 [P] [US1] Write `tests/test_rank.py`: the polite-but-empty email ranks below every item with a deadline or a weighted sender; the function is pure and stable across runs; bounds hold at the extremes
-- [ ] T048 [US1] Implement `src/cos/brief.py`: render `BRIEF.md` with the ranked list, source links, the `seen_in_runs` staleness marker from D-010, and the run manifest header including which sources were absent
-- [ ] T049 [US1] Wire `cos brief` end to end and assert the per-run wall-time budget from SC-014
+- [x] T048 [US1] Implement `src/cos/brief.py`: render `BRIEF.md` with the ranked list, source links, the `seen_in_runs` staleness marker from D-010, and the run manifest header including which sources were absent
+- [x] T049 [US1] Wire `cos brief` end to end and assert the per-run wall-time budget from SC-014
 
 ### Evaluation
 
-- [ ] T050 [US1] Build `tests/golden/`: the expected `TodoItem[]` for the seeded corpus, with each of the six planted traps labelled so a failure names which trap regressed
+- [x] T050 [US1] Build `tests/golden/`: the expected `TodoItem[]` for the seeded corpus, with each of the six planted traps labelled so a failure names which trap regressed
 - [ ] T051 [US1] Write `tests/test_eval_consolidator.py`: a scored evaluation, not equality assertions. Metrics are duplicate recall, false-merge rate, buried-commitment recall, and invented-deadline count. Thresholds fail CI, and the invented-deadline threshold is zero (SC-010)
 
 **Checkpoint**: US1 is independently shippable. A correct ranked brief has value even if no draft is ever written.

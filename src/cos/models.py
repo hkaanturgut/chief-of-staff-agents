@@ -132,6 +132,10 @@ class SourceRef(Contract):
     thread_id: str | None = None
     permalink: str | None = None
     author: str = ""
+    # The address as well as the display name. Sender importance is configured by
+    # address, and matching a display name instead is both unreliable — people rename
+    # themselves — and trivially spoofable by anyone who can set a From name.
+    author_address: str | None = None
     timestamp: datetime
     excerpt: str = Field(default="", max_length=EXCERPT_MAX)
 
@@ -315,6 +319,7 @@ class RunManifest(Contract):
     sources_failed: list[str] = Field(default_factory=list)
     messages_in: int = 0
     signals: int = 0
+    dismissed: int = 0
     clusters: int = 0
     todos: int = 0
     actions: int = 0

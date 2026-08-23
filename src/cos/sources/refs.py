@@ -39,6 +39,7 @@ def from_mail(message: MailMessage) -> SourceRef:
         thread_id=message.conversation_id,
         permalink=message.web_link,
         author=message.from_name or message.from_address,
+        author_address=message.from_address,
         timestamp=message.received_at,
         excerpt=excerpt(message.body_text or message.subject),
     )
@@ -51,6 +52,7 @@ def from_chat(message: ChatMessage) -> SourceRef:
         thread_id=message.chat_id,
         permalink=message.web_link or teams_permalink(message.chat_id, message.id),
         author=message.from_name or message.from_address or "unknown",
+        author_address=message.from_address,
         timestamp=message.sent_at,
         excerpt=excerpt(message.body_text),
     )
@@ -63,6 +65,7 @@ def from_event(event: CalendarEvent) -> SourceRef:
         thread_id=None,
         permalink=event.web_link,
         author=event.organizer,
+        author_address=event.organizer,
         timestamp=event.start,
         excerpt=excerpt(event.body_text or event.subject),
     )

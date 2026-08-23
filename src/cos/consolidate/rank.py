@@ -43,9 +43,12 @@ def due_component(due: datetime | None, now: datetime, settings: UrgencySettings
 def sender_component(sources: list[SourceRef], senders: ImportantSenders) -> float:
     """The highest configured weight among the people who raised this.
 
-    Absent from the list means zero. Not unimportant — simply contributing nothing.
+    Matched on the address, falling back to the display name only when no address was
+    captured. Importance configured by address and matched against a display name silently
+    never fires — which is how a CAD 47,500 overdue invoice ranked 7 the first time this
+    ran over the full corpus.
     """
-    return max((senders.weight_for(s.author) for s in sources), default=0.0)
+    return max((senders.weight_for(s.author_address or s.author) for s in sources), default=0.0)
 
 
 def sources_component(sources: list[SourceRef], settings: UrgencySettings) -> float:

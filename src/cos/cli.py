@@ -8,6 +8,7 @@ none of them are.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Annotated
 
 import typer
@@ -77,26 +78,15 @@ def brief(
     ] = None,
 ) -> None:
     """Produce the ranked, deduplicated brief. Writes BRIEF.md. Sends nothing."""
-    from datetime import UTC, datetime
+    import asyncio
 
+    from cos import brief as brief_doc
     from cos.graph.auth import GraphAuthError, from_settings
-    from cos.graph.client import GraphClient
-    from cos.manifest import RunRecorder, new_run_id
-    from cos.settings import load_environment, load_settings
-    from cos.sources.collect import collect
-    from cos.sources.window import resolve
+    from cos.pipeline import run_brief
+    from cos.settings import load_environment, load_important_senders, load_settings
 
     settings = load_settings()
     env = load_environment()
-
-    now = datetime.now(UTC)
-    window = resolve(settings.window, now=now, lookback_hours=hours)
-    recorder = RunRecorder(
-        run_id=new_run_id(now),
-        window_start=window.start,
-        window_end=window.end,
-        dry_run=settings.run.dry_run,
-    )
 
     try:
         auth = from_settings()
@@ -105,21 +95,30 @@ def brief(
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
 
-    with GraphClient(auth=auth) as client:
-        bundle = collect(
-            client,
-            window,
-            sources=settings.sources.attended,
-            operator_address=env.graph_mailbox,
-            recorder=recorder,
+    stop_after = "sources" if raw else ("signals" if signals else None)
+
+    result = asyncio.run(
+        run_brief(
+            settings=settings,
+            env=env,
+            senders=load_important_senders(),
+            auth=auth,
+            lookback_hours=hours,
+            stop_after=stop_after,
         )
+    )
 
     if raw:
-        _print_raw(bundle)
+        _print_raw(result.bundle)
         return
 
-    typer.echo("`cos brief` beyond --raw is not implemented yet — see tasks T039, T049.")
-    raise typer.Exit(1)
+    if signals:
+        _print_signals(result.signals)
+        return
+
+    content = brief_doc.write(result.todos, result.manifest, settings.staleness)
+    typer.echo(content)
+    typer.echo(f"\nWritten to {brief_doc.BRIEF_PATH.name}", err=True)
 
 
 def _print_raw(bundle: object) -> None:
@@ -148,6 +147,25 @@ def _print_raw(bundle: object) -> None:
     typer.echo(f"\nCHAT ({len(bundle.chat)})")
     for c in bundle.chat:
         typer.echo(f"  {c.sent_at:%d %b %H:%M}  {(c.from_name or '?')[:24]:24}  {c.body_text[:60]}")
+
+
+def _print_signals(signals: Sequence[object]) -> None:
+    """Extracted signals with their provenance, before any deduplication."""
+    from cos.models import Signal
+
+    typer.echo(f"SIGNALS ({len(signals)}) — before consolidation\n")
+    for signal in signals:
+        assert isinstance(signal, Signal)
+        due = f"due {signal.due:%a %d %b}" if signal.due else "no deadline"
+        flag = " [ambiguous]" if signal.ambiguous else ""
+        typer.echo(f"  {signal.type:12} {due:18}{flag}")
+        typer.echo(f"    {signal.statement}")
+        for source in signal.sources:
+            typer.echo(
+                f"      <- {source.kind}:{source.id[:18]} {source.author[:22]} "
+                f"{source.timestamp:%d %b %H:%M}"
+            )
+        typer.echo("")
 
 
 @app.command()
