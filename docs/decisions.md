@@ -8,6 +8,26 @@ Running log of calls made during the build, and the one thing that needs a human
 
 **Status: open. Needs Kaan. This is the only item that blocks §6 of the spec.**
 
+**Update 2026-08-23.** Four routes tried, three closed. Recorded here so nobody spends
+another morning on them.
+
+| Route | Outcome |
+|---|---|
+| M365 Developer Program E5 sandbox | *"You don't currently qualify."* Microsoft tightened eligibility; the Visual Studio Enterprise benefit no longer grants it. |
+| M365 trial inside `kaanturgutbusinessgmail.onmicrosoft.com` | Admin centre refuses the signed-in identity outright — error 100014, *"Login is not supported for consumer users without business presence."* The account is a personal Microsoft account guest-invited into the directory, so no role assignment can fix it. Creating a native cloud member with Global Administrator got past that, and then checkout itself failed: this is a Default Directory Azure created to hold a subscription, and it has no commerce backend. |
+| A dedicated mailbox in `deop.ca` | Kaan holds **User Administrator** there — enough to create a licensed mailbox, and there are 106 free `Microsoft_365_E3_(no_Teams)` seats. Not enough for anything that would authenticate to it: `allowedToCreateApps` is `False` tenant-wide, and the consent policy is `microsoft-user-default-low`, which does not cover `Mail.Read`, `Mail.Send`, or `Calendars.ReadWrite`. App registration and admin consent both need someone else. Separately, it is an employer tenant, and a projector pointed at it shows the company domain and colleagues' names in every recipient autocomplete — Hard rule 2. |
+| A personal `outlook.com` account under a multi-tenant app | This directory accepts `signInAudience: AzureADMultipleOrgs` but **rejects `AzureADandPersonalMicrosoftAccounts`**. A Default Directory has no Microsoft-account federation, so it cannot host an app that accepts consumer sign-ins. |
+
+**Route still open, and the only reliable one:** a standalone Microsoft 365 Business Basic
+trial signed up from the marketing page with a *new* account and a *new* domain, which
+creates a normal commerce-enabled tenant with Global Administrator from the first minute.
+Five minutes, a card for identity verification, not charged during the trial.
+
+App registration `chief-of-staff-graph` (`757b8da4-1eb3-4aef-9ac7-b26b0afd959a`) is left as
+`AzureADMultipleOrgs`, so it will work against whatever work/school tenant appears without
+needing a second registration — only consent.
+
+
 The spec names tenant `ffe3d4fb-2c1a-4bee-be2f-4b6e78f182c9` (Visual Studio Enterprise
 Subscription, `kaanturgutbusinessgmail.onmicrosoft.com`). Two facts about it:
 
