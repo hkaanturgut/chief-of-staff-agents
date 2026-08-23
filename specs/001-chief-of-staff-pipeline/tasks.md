@@ -90,11 +90,11 @@ commitment appears, "soon-ish" yields no due date, and the polite-but-empty emai
 - [ ] T033 [P] [US1] Write `agents/chat-triage.yaml`: cheap tier, referent resolution from `preceding_context` or `ambiguous: true`, and an explicit prohibition on inventing a deadline
 - [ ] T034 [P] [US1] Write `agents/calendar-context.yaml`: cheap tier, `meeting_prep` and `conflict` signals, plus the shape of the day for realistic ranking
 - [ ] T035 [P] [US1] Write `agents/chief-of-staff.yaml`: the orchestrator, declaring the three ingest agents as connected agents and describing when each source is relevant
-- [ ] T036 [US1] Implement `src/cos/agents/runner.py` — the single model call path: schema-constrained request, in-process Pydantic validation, exactly one retry with the validation error appended, loud failure on the second, and a `ModelCallLog` line written for every attempt (Principles V and VIII)
+- [x] T036 [US1] Implement `src/cos/agents/runner.py` — the single model call path: schema-constrained request, in-process Pydantic validation, exactly one retry with the validation error appended, loud failure on the second, and a `ModelCallLog` line written for every attempt (Principles V and VIII)
 - [ ] T037 [US1] Implement `src/cos/agents/provision.py` and `scripts/provision_agents.py`: read `agents/*.yaml`, create or update by name so re-running is idempotent, and wire the connected-agent relationships through `azure-ai-projects`
 - [ ] T038 [US1] Implement `src/cos/agents/connected.py`: orchestrator invocation through `agent-framework`, source selection per request, and manifest population including which sources succeeded and which failed
 - [ ] T039 [US1] Wire `cos brief --signals` to print extracted `Signal` objects with their provenance
-- [ ] T040 [P] [US1] Write `tests/test_runner.py`: the retry fires exactly once on a validation error, the second failure raises, and both attempts are logged
+- [x] T040 [P] [US1] Write `tests/test_runner.py`: the retry fires exactly once on a validation error, the second failure raises, and both attempts are logged
 
 ### Consolidation — the centrepiece
 

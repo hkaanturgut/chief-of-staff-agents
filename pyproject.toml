@@ -80,12 +80,20 @@ strict = true
 # The SDKs on the critical path ship incomplete stubs; typing our own code strictly
 # matters more than fighting theirs.
 [[tool.mypy.overrides]]
-module = ["agent_framework.*", "azure.*", "msal.*", "frontmatter.*", "ulid.*"]
+module = [
+    "agent_framework.*",
+    "agent_framework_foundry.*",
+    "azure.*",
+    "msal.*",
+    "frontmatter.*",
+    "ulid.*",
+]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q --strict-markers"
+asyncio_mode = "auto"
 markers = [
     "live: requires a real tenant and network. Excluded from CI by default.",
 ]
