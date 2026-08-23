@@ -54,3 +54,18 @@ Do not hide these. They are the most credible three minutes of the talk.
 
 That last one is the best slide in the deck. It is what "where it gets things wrong"
 actually looks like.
+
+## Checkpoint branches
+
+Each is green from a clean clone and leaves the working tree clean, so `git checkout`
+always succeeds mid-demo.
+
+| Branch | State | Tests |
+|---|---|---|
+| `ckpt-0-scaffold` | Contracts, Graph auth, sources, `cos brief --raw` against a live mailbox | 154 |
+| `ckpt-1-naive` | The single-agent baseline. Run it with `--twice` | 154 |
+| `ckpt-2-consolidator` | Both consolidator stages. The triple collapses | 180 |
+| `ckpt-3-approval` | Drafter, outbox, pull request, executor | 221 |
+| `ckpt-4-pipeline` | Workflows, gated environment, ledger, kill switches, evaluation | 226 |
+
+Verified by cloning fresh and running `uv sync --frozen --extra dev && pytest` on each.

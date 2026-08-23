@@ -179,7 +179,7 @@ so a local run cannot bypass them.
 - [ ] T077 Populate `config/allowed_recipients.yaml` with the demo tenant addresses only, and verify the file reads clearly enough to be shown on a projector
 - [x] T078 Run the full pipeline against the live demo tenant end to end, confirming every item in the build spec §13 definition of done
 - [x] T079 [P] Write `docs/live-prompts.md` and `docs/run-of-show.md` — presentation artifacts, deliberately outside the Spec Kit tree
-- [ ] T080 Cut and freeze the five checkpoint branches, verifying each from a clean clone. **After** the definition of done is green, never before — they are carved out of finished code, not a build strategy
+- [x] T080 Cut and freeze the five checkpoint branches, verifying each from a clean clone. **After** the definition of done is green, never before — they are carved out of finished code, not a build strategy
 
 ---
 
