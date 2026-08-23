@@ -229,9 +229,7 @@ def test_midweek_is_an_ordinary_lookback() -> None:
 
 def test_an_explicit_window_is_never_extended() -> None:
     """If the operator asked for six hours, they meant six hours."""
-    window = resolve(
-        WindowSettings(), now=datetime(2026, 8, 24, 9, 0, tzinfo=TZ), lookback_hours=6
-    )
+    window = resolve(WindowSettings(), now=datetime(2026, 8, 24, 9, 0, tzinfo=TZ), lookback_hours=6)
     assert window.hours == 6
 
 
