@@ -216,3 +216,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- project ---
+.env
+.venv/
+# MSAL token cache. Never commit a token.
+.msal_cache.bin
+.msal_cache.json
+# state/ is deliberately NOT ignored: state/ledger.json and state/runs/ are the audit
+# trail, and the audit trail living in git is the point of the whole design.

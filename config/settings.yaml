@@ -1,0 +1,79 @@
+# Chief of Staff — runtime settings.
+# Everything here is reviewable on a projector. That is deliberate: the answer to
+# "what stops it emailing my customers" should be a file someone can read, not a
+# paragraph in a README.
+
+run:
+  # Dry run is the default and stays the default in the repository. The demo flips it
+  # live. Under dry_run the executor does not merely skip the send — it refuses to
+  # construct a live transport at all.
+  dry_run: true
+
+  # Hard stop. Not a warning, not a soft limit. If a run wants a sixth action, the run
+  # stops at five and says so in the pull request.
+  max_actions_per_run: 5
+
+window:
+  # Default lookback for mail and chat. See docs/decisions.md D-008.
+  lookback_hours: 24
+
+  # Extend backwards across weekends and holidays, so a Monday run reaches Friday
+  # evening. A fixed 24 hours silently drops the weekend, which is exactly when a
+  # Monday-morning brief matters most.
+  extend_over_non_working_days: true
+
+  # Calendar look-ahead: today plus this many business days.
+  calendar_lookahead_business_days: 2
+
+  # Timezone used to resolve "today" and business-day boundaries.
+  timezone: "America/Toronto"
+
+sources:
+  # Which sources an unattended run may use. Chat is absent on purpose: reading Teams
+  # chat under an application identity needs Microsoft's protected API approval, which
+  # is not in place. See research.md R-012. A brief produced without chat says so.
+  scheduled: ["mail", "calendar"]
+  attended: ["mail", "chat", "calendar"]
+
+  # How many preceding chat messages to carry as context. Chat is low-context and full
+  # of implicit asks; without the surrounding messages the agent has no honest way to
+  # resolve "can you take a look?" — and guessing is forbidden.
+  chat_context_messages: 8
+
+models:
+  # Pinned, with NoAutoUpgrade set on the deployments themselves. Behaviour must not
+  # change between the rehearsal and the talk because a model refreshed underneath.
+  # See docs/decisions.md D-001.
+  ingest:
+    deployment: "gpt-5.4-mini"
+    version: "2026-03-17"
+  strong:
+    deployment: "gpt-5.5"
+    version: "2026-04-24"
+
+urgency:
+  # Urgency is computed here, in code, from these weights. The model writes only the
+  # sentence explaining the number it was handed. See research.md R-007.
+  # Components are each scored 0-1, multiplied by their weight, and summed to 0-100.
+  weights:
+    due_proximity: 50      # an explicit deadline, closer scoring higher
+    sender_importance: 30  # from config/important_senders.yaml. Explicit, never inferred.
+    distinct_sources: 20   # the same ask arriving three ways is genuinely more urgent
+
+  # A deadline this many hours out or nearer scores the full due_proximity component.
+  due_imminent_hours: 24
+  # Beyond this many hours, an explicit deadline contributes nothing.
+  due_horizon_hours: 168
+
+  # Distinct sources needed to score the full distinct_sources component.
+  sources_saturation: 3
+
+staleness:
+  # An unactioned to-do recurs rather than expiring — see docs/decisions.md D-010.
+  # After this many consecutive runs it is surfaced as stale in the brief.
+  flag_after_runs: 3
+
+github:
+  repo: "hkaanturgut/chief-of-staff-agents"
+  branch_prefix: "cos/run-"
+  high_risk_label: "high-risk"

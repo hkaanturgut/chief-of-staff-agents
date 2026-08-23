@@ -22,7 +22,7 @@ the audit trail is the product.
 
 **Language/Version**: Python 3.11+ (`requires-python = ">=3.11"`), managed with `uv`, lockfile committed.
 
-**Primary Dependencies**: `agent-framework` 1.15.0 (orchestration) with `agent-framework-azure-ai` 1.0.0rc6 (Foundry provider, pinned exactly — it is a release candidate); `azure-ai-projects` 2.5.0 (agent provisioning and connected agents); `azure-identity` 1.25.x and `msal` 1.37.x (two separate credential chains, see research R-003); `httpx` (Graph v1.0, see R-004); `pydantic` 2.13.x (contracts); `typer` (CLI); `structlog` (logging); `python-ulid`; `PyYAML`; `python-frontmatter`.
+**Primary Dependencies**: `agent-framework-core` 1.15.0 with `agent-framework-foundry` 1.11.0 (the current Foundry provider; `agent-framework-azure-ai` is the old name and is stranded at a release candidate — see research R-001); `azure-ai-projects` >=2.2,<2.4 (agent provisioning and connected agents; the upper bound is required, not cautious); `azure-identity` 1.25.x and `msal` 1.37.x (two separate credential chains, see research R-003); `httpx` (Graph v1.0, see R-004); `pydantic` 2.13.x (contracts); `typer` (CLI); `structlog` (logging); `python-ulid`; `PyYAML`; `python-frontmatter`.
 
 **Storage**: Files in the repository. `outbox/{pending,sent,failed}/*.md`, `state/ledger.json`, `state/runs/*.jsonl`, `BRIEF.md`. No database, no Azure state store — Constitution VII.
 

@@ -1,0 +1,18 @@
+# Sender importance, stated explicitly. Never inferred. See docs/decisions.md D-009.
+#
+# Inferring importance from interaction history was rejected: it is unreviewable, it
+# drifts between runs, and the operator must be able to open one file and understand
+# why an item ranked where it did. "Urgency is computed, not vibed" only holds if every
+# input to the computation is inspectable.
+#
+# weight is 0.0 to 1.0 and scales the sender_importance component in
+# config/settings.yaml. A sender absent from this file contributes zero — they are not
+# unimportant, they simply add nothing. An unknown sender with a real deadline still
+# ranks, because the deadline and multi-source components apply regardless.
+
+senders: []
+# - match: "priya@demo.example"     # exact address
+#   weight: 1.0
+#   note: "Runs the vendor relationship. If she is asking twice, it is real."
+# - match: "@board.demo.example"    # domain suffix
+#   weight: 0.9

@@ -1,0 +1,29 @@
+# THE KILL SWITCH.
+#
+# Nothing leaves this system to an address that is not on this list. The check runs in
+# src/cos/outbox/executor.py before any provider call, and it is evaluated against the
+# proposal file's CURRENT contents — so editing a recipient in the GitHub web editor
+# does not slip past it.
+#
+# An empty list means nothing can be sent to anyone. That is the correct default.
+#
+# This file exists to be read out loud. When someone in the room asks "what stops it
+# emailing a real customer", the answer is this file, on screen, plus the environment
+# approval and the dry-run default.
+
+# Exact addresses. Case-insensitive.
+addresses: []
+# - demo-alt-1@example.onmicrosoft.com
+# - demo-alt-2@example.onmicrosoft.com
+
+# Whole domains. Use sparingly — a domain entry is a much larger blast radius than an
+# address entry, and the demo tenant should be enumerated address by address.
+domains: []
+# - contoso-demo.onmicrosoft.com
+
+# Teams chat ids the system may post into.
+chat_ids: []
+
+# GitHub repositories the system may open issues in.
+repos:
+  - "hkaanturgut/chief-of-staff-agents"

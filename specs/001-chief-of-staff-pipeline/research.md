@@ -3,23 +3,38 @@
 Decisions taken before design, with the reasoning that produced them. Everything that the
 Technical Context would otherwise have marked NEEDS CLARIFICATION is resolved here.
 
-## R-001 — Orchestration library: Microsoft Agent Framework, with a pinned provider
+## R-001 — Orchestration library: Microsoft Agent Framework, on the current provider
 
-**Finding.** `agent-framework` is at 1.15.0 and generally available. The Azure AI provider
-package, `agent-framework-azure-ai`, is at 1.0.0rc6 — still a release candidate. The
-framework meta-package pulls `agent-framework-core[all]==1.15.0`; the Azure provider is a
-separate distribution on its own release track.
+**Finding, after attempting the resolve.** The build spec's stack list and the obvious
+reading of the package index both point at `agent-framework-azure-ai`. That package is
+stranded at `1.0.0rc6`. It is the **old name**. The current Foundry provider is
+`agent-framework-foundry`, at 1.11.0, and it is what `agent-framework-core[all]` actually
+depends on.
 
-**Decision.** Use `agent-framework` for orchestration and `agent-framework-azure-ai` for
-the Foundry provider, both pinned to exact versions in `pyproject.toml` with a `uv.lock`
-committed. A release candidate on the critical path of a live demonstration is a risk that
-must be pinned rather than tracked.
+Taking the newest of everything does not resolve, and the reason is worth writing down
+because it would have surfaced at the worst possible moment:
 
-**Alternative rejected.** Calling the Foundry REST surface directly through
-`azure-ai-projects` alone and hand-rolling the orchestration loop. It removes the
-release-candidate dependency but also removes the connected-agent routing that the
-architecture exists to demonstrate, and it means writing a tool-call loop that is not the
-subject of the talk.
+- `agent-framework-foundry` 1.11.0 requires `azure-ai-projects<2.4.0`.
+- `azure-ai-projects` 2.5.0 requires `openai>=3.0.0`.
+- `agent-framework-openai` 1.14.0 requires `openai<3`.
+
+So `azure-ai-projects` at its latest is incompatible with the framework, through a
+transitive `openai` major-version boundary that neither package mentions in its summary.
+
+**Decision.** Depend on `agent-framework-core>=1.15,<2` and `agent-framework-foundry>=1.11,<2`
+directly, with `azure-ai-projects>=2.2,<2.4`. The resolved set is core 1.15.0, foundry
+1.11.0, openai 1.14.0, `azure-ai-projects` 2.3.0, `openai` 2.54.0. `uv.lock` is committed,
+so a clean clone gets exactly this.
+
+**Do not depend on the `agent-framework` meta-package.** It pulls `agent-framework-core[all]`,
+which is roughly thirty provider packages — Bedrock, Gemini, Ollama, Anthropic, Copilot
+Studio, and more. None are used here, and every one is an additional resolution constraint
+that can break the build in the week before a talk.
+
+**Alternative rejected.** Calling the Foundry REST surface through `azure-ai-projects` alone
+and hand-rolling the orchestration loop. It sheds the version-skew risk but also sheds the
+connected-agent routing that the architecture exists to demonstrate, in exchange for
+writing a tool-call loop that is not the subject of the talk.
 
 ## R-002 — Agent provisioning: `azure-ai-projects`
 
