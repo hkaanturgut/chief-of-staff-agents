@@ -86,3 +86,23 @@ def replay() -> ReplayTransport:
 @pytest.fixture
 def stub() -> StubTransport:
     return StubTransport()
+
+
+@pytest.fixture(autouse=True)
+def isolate_outbox(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """No test may write into the repository's own outbox.
+
+    The executor's failure path moves proposals to `writer.FAILED`, and a test that
+    exercises it without redirecting first leaves files in the working tree. That was
+    found by verifying the checkpoint branches from a clean clone: `git checkout` refused
+    to switch branches because the test run had dirtied `outbox/failed/`.
+
+    Autouse, because remembering to redirect in each test is exactly the kind of thing
+    that gets forgotten in the one test that matters.
+    """
+    from cos.outbox import writer
+
+    for name in ("PENDING", "SENT", "FAILED"):
+        target = tmp_path / "outbox" / name.lower()
+        target.mkdir(parents=True, exist_ok=True)
+        monkeypatch.setattr(writer, name, target)
