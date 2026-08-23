@@ -111,7 +111,7 @@ commitment appears, "soon-ish" yields no due date, and the polite-but-empty emai
 ### Evaluation
 
 - [x] T050 [US1] Build `tests/golden/`: the expected `TodoItem[]` for the seeded corpus, with each of the six planted traps labelled so a failure names which trap regressed
-- [ ] T051 [US1] Write `tests/test_eval_consolidator.py`: a scored evaluation, not equality assertions. Metrics are duplicate recall, false-merge rate, buried-commitment recall, and invented-deadline count. Thresholds fail CI, and the invented-deadline threshold is zero (SC-010)
+- [x] T051 [US1] Write `tests/test_eval_consolidator.py`: a scored evaluation, not equality assertions. Metrics are duplicate recall, false-merge rate, buried-commitment recall, and invented-deadline count. Thresholds fail CI, and the invented-deadline threshold is zero (SC-010)
 
 **Checkpoint**: US1 is independently shippable. A correct ranked brief has value even if no draft is ever written.
 
@@ -136,7 +136,7 @@ table. Merging is not required.
 - [x] T059 [US2] Implement `src/cos/outbox/pr.py`: branch `cos/run-YYYYMMDD-HHMM`, commit the pending files and `BRIEF.md`, push, and open a pull request whose body is the brief plus a risk-labelled action table with the run manifest header
 - [x] T060 [US2] Add the `high-risk` label when any action is high risk (FR-026), and suppress pull request creation entirely when a run produced no actions (FR-027)
 - [x] T061 [US2] Wire `cos propose` end to end, and add `scripts/run_pipeline.py` as the thin wrapper the workflow calls
-- [ ] T062 [US2] Write `.github/workflows/brief.yml` per contracts/workflows.md: scheduled and manual, OIDC login with no stored secret, mail and calendar only (R-012), and a brief that states chat was absent
+- [x] T062 [US2] Write `.github/workflows/brief.yml` per contracts/workflows.md: scheduled and manual, OIDC login with no stored secret, mail and calendar only (R-012), and a brief that states chat was absent
 
 **Checkpoint**: proposals are reviewable and editable in GitHub. Nothing can send yet.
 
@@ -176,7 +176,7 @@ so a local run cannot bypass them.
 - [x] T074 [P] Write `scripts/seed_demo_inbox.py`: send real mail and post real chat from alt accounts, planting all six traps from spec.md. Kept outside `src/` because it is scaffolding rather than product
 - [x] T075 [P] Write `README.md`: what it is, the architecture diagram, the quickstart from quickstart.md, and the two gates stated plainly
 - [x] T076 [P] Fill `config/voice.md` with real writing rules and three to five genuine sample messages, so drafts sound like the operator
-- [ ] T077 Populate `config/allowed_recipients.yaml` with the demo tenant addresses only, and verify the file reads clearly enough to be shown on a projector
+- [x] T077 Populate `config/allowed_recipients.yaml` with the demo tenant addresses only, and verify the file reads clearly enough to be shown on a projector
 - [x] T078 Run the full pipeline against the live demo tenant end to end, confirming every item in the build spec §13 definition of done
 - [x] T079 [P] Write `docs/live-prompts.md` and `docs/run-of-show.md` — presentation artifacts, deliberately outside the Spec Kit tree
 - [x] T080 Cut and freeze the five checkpoint branches, verifying each from a clean clone. **After** the definition of done is green, never before — they are carved out of finished code, not a build strategy
