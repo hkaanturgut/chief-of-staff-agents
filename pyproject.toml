@@ -69,6 +69,9 @@ src = ["src", "tests", "scripts"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+# En and em dashes are used deliberately in prose and appear in real mail subjects.
+# Flagging them as confusable produces noise, not safety.
+allowed-confusables = ["–", "—"]
 
 [tool.mypy]
 python_version = "3.11"

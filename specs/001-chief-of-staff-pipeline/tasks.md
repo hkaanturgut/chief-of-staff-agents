@@ -29,14 +29,14 @@ Single project. `src/cos/` for the package, `tests/` at the repository root, `ag
 
 **Purpose**: a runnable, testable, lintable skeleton. Nothing here depends on a tenant.
 
-- [ ] T001 Create `pyproject.toml` declaring package `cos` with `requires-python = ">=3.11"`, the src layout, the `cos` console script, and the pinned dependencies from plan.md Technical Context
-- [ ] T002 Run `uv sync` and commit `uv.lock`, so a clean clone resolves identically (SC-015)
-- [ ] T003 [P] Configure ruff and mypy in `pyproject.toml`, targeting `src/cos` with strict optional handling
-- [ ] T004 [P] Create the directory skeleton with `__init__.py` files: `src/cos/{graph,sources,agents,consolidate,draft,outbox}`, `tests/{fixtures,golden}`, `outbox/{pending,sent,failed}` each with a `.gitkeep`, and `state/runs/`
-- [ ] T005 [P] Add `state/ledger.json` containing `{"entries": []}` and confirm `.gitignore` covers `.env`, `__pycache__`, `.venv`, and the MSAL token cache but **not** `state/` — the ledger and run logs are the audit trail and belong in version control
-- [ ] T006 [P] Write `config/settings.yaml` with `dry_run: true`, `max_actions_per_run: 5`, the window defaults from D-008, the pinned model deployments and versions, and the urgency weights from R-007
-- [ ] T007 [P] Write `config/allowed_recipients.yaml` with an explanatory header and no live addresses yet, and `config/important_senders.yaml` with the schema from D-009
-- [ ] T008 [P] Write `config/voice.md` with placeholder writing rules and slots for three to five sample sent messages
+- [x] T001 Create `pyproject.toml` declaring package `cos` with `requires-python = ">=3.11"`, the src layout, the `cos` console script, and the pinned dependencies from plan.md Technical Context
+- [x] T002 Run `uv sync` and commit `uv.lock`, so a clean clone resolves identically (SC-015)
+- [x] T003 [P] Configure ruff and mypy in `pyproject.toml`, targeting `src/cos` with strict optional handling
+- [x] T004 [P] Create the directory skeleton with `__init__.py` files: `src/cos/{graph,sources,agents,consolidate,draft,outbox}`, `tests/{fixtures,golden}`, `outbox/{pending,sent,failed}` each with a `.gitkeep`, and `state/runs/`
+- [x] T005 [P] Add `state/ledger.json` containing `{"entries": []}` and confirm `.gitignore` covers `.env`, `__pycache__`, `.venv`, and the MSAL token cache but **not** `state/` — the ledger and run logs are the audit trail and belong in version control
+- [x] T006 [P] Write `config/settings.yaml` with `dry_run: true`, `max_actions_per_run: 5`, the window defaults from D-008, the pinned model deployments and versions, and the urgency weights from R-007
+- [x] T007 [P] Write `config/allowed_recipients.yaml` with an explanatory header and no live addresses yet, and `config/important_senders.yaml` with the schema from D-009
+- [x] T008 [P] Write `config/voice.md` with placeholder writing rules and slots for three to five sample sent messages
 
 ---
 
@@ -44,18 +44,18 @@ Single project. `src/cos/` for the package, `tests/` at the repository root, `ag
 
 **⚠️ Blocking.** No user story can begin until this phase is complete.
 
-- [ ] T009 Implement all models from data-model.md in `src/cos/models.py`, with `extra="forbid"` and `frozen=True` throughout, `min_length=1` on every `sources` field, the validator rejecting a non-null `due` when `ambiguous` is true, the validator forcing `suggested_action="no_action"` when `needs_human_judgment` is true, and timezone-aware datetime enforcement
-- [ ] T010 Implement content-derived identifiers in `src/cos/ids.py` per data-model.md: `normalise()`, `ulid_from_hash()`, `todo_id()`, `action_id()`
-- [ ] T011 [P] Write `tests/test_contracts.py`: every invariant in data-model.md "Invariants worth restating", each as a failing-construction test
-- [ ] T012 [P] Write `tests/test_ids.py`: same content yields the same identifier across processes; reordered sources yield the same identifier; a changed statement yields a different one
-- [ ] T013 Implement typed settings loading in `src/cos/settings.py`, reading `config/*.yaml` and `.env` into frozen Pydantic models, failing loudly on a missing required key
-- [ ] T014 Implement structured logging setup in `src/cos/logging.py` using `structlog`, with a JSON renderer for `state/runs/` and a human renderer for the terminal
-- [ ] T015 Implement `src/cos/manifest.py`: `RunManifest` accumulation, token and cost totals, and `ModelCallLog` line writing to `state/runs/<run_id>.jsonl`
-- [ ] T016 Implement `scripts/export_schemas.py`, generating the committed JSON Schemas in `specs/001-chief-of-staff-pipeline/contracts/` from the Pydantic models
-- [ ] T017 [P] Write `tests/test_schemas_current.py`, asserting the committed schemas match what the models currently produce, so a model change that is not reflected in the contracts fails CI
-- [ ] T018 Implement the Typer CLI skeleton in `src/cos/cli.py` with `login`, `provision`, `brief`, `propose`, `execute`, and `replay`, each wired to a stub that exits non-zero
-- [ ] T019 Write `.github/workflows/ci.yml` per contracts/workflows.md: `uv sync --frozen` then `pytest`, `contents: read` only, no credentials of any kind
-- [ ] T020 [P] Write `tests/test_determinism_imports.py`, asserting by import-graph inspection that `cos.consolidate.prepass`, `cos.consolidate.entities`, and `cos.consolidate.rank` transitively import nothing from `cos.agents` (Constitution III)
+- [x] T009 Implement all models from data-model.md in `src/cos/models.py`, with `extra="forbid"` and `frozen=True` throughout, `min_length=1` on every `sources` field, the validator rejecting a non-null `due` when `ambiguous` is true, the validator forcing `suggested_action="no_action"` when `needs_human_judgment` is true, and timezone-aware datetime enforcement
+- [x] T010 Implement content-derived identifiers in `src/cos/ids.py` per data-model.md: `normalise()`, `ulid_from_hash()`, `todo_id()`, `action_id()`
+- [x] T011 [P] Write `tests/test_contracts.py`: every invariant in data-model.md "Invariants worth restating", each as a failing-construction test
+- [x] T012 [P] Write `tests/test_ids.py`: same content yields the same identifier across processes; reordered sources yield the same identifier; a changed statement yields a different one
+- [x] T013 Implement typed settings loading in `src/cos/settings.py`, reading `config/*.yaml` and `.env` into frozen Pydantic models, failing loudly on a missing required key
+- [x] T014 Implement structured logging setup in `src/cos/logging.py` using `structlog`, with a JSON renderer for `state/runs/` and a human renderer for the terminal
+- [x] T015 Implement `src/cos/manifest.py`: `RunManifest` accumulation, token and cost totals, and `ModelCallLog` line writing to `state/runs/<run_id>.jsonl`
+- [x] T016 Implement `scripts/export_schemas.py`, generating the committed JSON Schemas in `specs/001-chief-of-staff-pipeline/contracts/` from the Pydantic models
+- [x] T017 [P] Write `tests/test_schemas_current.py`, asserting the committed schemas match what the models currently produce, so a model change that is not reflected in the contracts fails CI
+- [x] T018 Implement the Typer CLI skeleton in `src/cos/cli.py` with `login`, `provision`, `brief`, `propose`, `execute`, and `replay`, each wired to a stub that exits non-zero
+- [x] T019 Write `.github/workflows/ci.yml` per contracts/workflows.md: `uv sync --frozen` then `pytest`, `contents: read` only, no credentials of any kind
+- [x] T020 [P] Write `tests/test_determinism_imports.py`, asserting by import-graph inspection that `cos.consolidate.prepass`, `cos.consolidate.entities`, and `cos.consolidate.rank` transitively import nothing from `cos.agents` (Constitution III)
 
 **Checkpoint**: `uv run pytest` is green and `uv run cos --help` works, with no tenant and no network.
 
@@ -98,13 +98,13 @@ commitment appears, "soon-ish" yields no due date, and the polite-but-empty emai
 
 ### Consolidation — the centrepiece
 
-- [ ] T041 [US1] Implement `src/cos/consolidate/entities.py`: regex extraction of issue and ticket references, pull request and document URLs with tracking parameters stripped, and invoice and order numbers
-- [ ] T042 [US1] Implement `src/cos/consolidate/prepass.py`: union-find over conversation and thread identity, normalised subject with reply and forward prefixes stripped repeatedly, and shared entity keys. **No model call, ever** (R-006, Constitution III)
-- [ ] T043 [US1] Write `tests/test_prepass.py` — this should be the largest single test file in the repository. Cover subject normalisation across `Re:`, `RE:`, `Fwd:`, `AW:`, and stacked prefixes; conversation-id grouping; entity-key grouping; the triple collapsing to one cluster; and two genuinely distinct asks that share a subject staying separable
+- [x] T041 [US1] Implement `src/cos/consolidate/entities.py`: regex extraction of issue and ticket references, pull request and document URLs with tracking parameters stripped, and invoice and order numbers
+- [x] T042 [US1] Implement `src/cos/consolidate/prepass.py`: union-find over conversation and thread identity, normalised subject with reply and forward prefixes stripped repeatedly, and shared entity keys. **No model call, ever** (R-006, Constitution III)
+- [x] T043 [US1] Write `tests/test_prepass.py` — this should be the largest single test file in the repository. Cover subject normalisation across `Re:`, `RE:`, `Fwd:`, `AW:`, and stacked prefixes; conversation-id grouping; entity-key grouping; the triple collapsing to one cluster; and two genuinely distinct asks that share a subject staying separable
 - [ ] T044 [US1] Write `agents/consolidator.yaml`: strong tier, merge-or-split within a supplied cluster only, and a schema that contains no `urgency`, `due`, `sources`, or `id` field (contracts/README.md)
 - [ ] T045 [US1] Implement `src/cos/consolidate/merge.py`: one call per candidate cluster, merge-or-split decision, merged statement, and assembly of the source union **in code** rather than by the model
-- [ ] T046 [US1] Implement `src/cos/consolidate/rank.py`: pure urgency arithmetic from explicit due-date proximity, configured sender weight, and distinct source count, bounded to 0–100 (R-007)
-- [ ] T047 [P] [US1] Write `tests/test_rank.py`: the polite-but-empty email ranks below every item with a deadline or a weighted sender; the function is pure and stable across runs; bounds hold at the extremes
+- [x] T046 [US1] Implement `src/cos/consolidate/rank.py`: pure urgency arithmetic from explicit due-date proximity, configured sender weight, and distinct source count, bounded to 0–100 (R-007)
+- [x] T047 [P] [US1] Write `tests/test_rank.py`: the polite-but-empty email ranks below every item with a deadline or a weighted sender; the function is pure and stable across runs; bounds hold at the extremes
 - [ ] T048 [US1] Implement `src/cos/brief.py`: render `BRIEF.md` with the ranked list, source links, the `seen_in_runs` staleness marker from D-010, and the run manifest header including which sources were absent
 - [ ] T049 [US1] Wire `cos brief` end to end and assert the per-run wall-time budget from SC-014
 
@@ -174,7 +174,7 @@ so a local run cannot bypass them.
 ## Phase 6: Polish and demo scaffolding
 
 - [ ] T074 [P] Write `scripts/seed_demo_inbox.py`: send real mail and post real chat from alt accounts, planting all six traps from spec.md. Kept outside `src/` because it is scaffolding rather than product
-- [ ] T075 [P] Write `README.md`: what it is, the architecture diagram, the quickstart from quickstart.md, and the two gates stated plainly
+- [x] T075 [P] Write `README.md`: what it is, the architecture diagram, the quickstart from quickstart.md, and the two gates stated plainly
 - [ ] T076 [P] Fill `config/voice.md` with real writing rules and three to five genuine sample messages, so drafts sound like the operator
 - [ ] T077 Populate `config/allowed_recipients.yaml` with the demo tenant addresses only, and verify the file reads clearly enough to be shown on a projector
 - [ ] T078 Run the full pipeline against the live demo tenant end to end, confirming every item in the build spec §13 definition of done

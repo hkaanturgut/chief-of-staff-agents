@@ -26,7 +26,7 @@ _FIXED_TIMESTAMP_MS = 1767225600000
 
 _WHITESPACE = re.compile(r"\s+")
 # The en and em dashes are intentional: real mail subjects contain them.
-_TRAILING_PUNCT = re.compile(r"[\s.,;:!?\-–—]+$")  # noqa: RUF001
+_TRAILING_PUNCT = re.compile(r"[\s.,;:!?\-–—]+$")
 
 
 def normalise(text: str) -> str:
