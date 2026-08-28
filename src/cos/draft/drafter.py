@@ -148,6 +148,9 @@ async def draft_one(
         instructions=instructions,
         prompt=render_todo(todo, operator),
         schema=Draft,
+        stage="draft",
+        parent="chief-of-staff",
+        label=todo.title,
     )
 
     if kind in {"reply_mail", "send_mail"} and not result.recipients:

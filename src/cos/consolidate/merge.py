@@ -185,6 +185,15 @@ def _partition(groups: list[list[int]] | None, signals: Sequence[Signal]) -> lis
     return result
 
 
+def _cluster_label(signals: Sequence[Signal]) -> str:
+    """A short human name for a cluster, for the console timeline."""
+    head = signals[0].statement if signals else "cluster"
+    head = head.strip().rstrip(".")
+    if len(head) > 58:
+        head = head[:57].rstrip() + "\u2026"
+    return f"{head} ({len(signals)})"
+
+
 async def merge_cluster(
     runner: AgentRunner,
     tier: ModelTier,
@@ -195,8 +204,15 @@ async def merge_cluster(
     senders: ImportantSenders,
     instructions: str,
     operator: str,
+    parent: str = "chief-of-staff",
 ) -> list[TodoItem]:
-    """Resolve one candidate cluster into one or more to-dos."""
+    """Resolve one candidate cluster into one or more to-dos.
+
+    `parent` is recorded, not acted on. A top-level cluster is delegated by the
+    orchestrator; the groups of a split are re-asked by the consolidator itself, so those
+    calls carry the consolidator as their parent. That is what makes a split legible as
+    recursion in the console instead of looking like five unrelated calls.
+    """
     sources = _merged_sources(signals)
     due = earliest_explicit_due(list(signals))
     urgency_view = explain_inputs(
@@ -209,6 +225,9 @@ async def merge_cluster(
         instructions=instructions,
         prompt=render_cluster(signals, urgency_view, operator=operator),
         schema=ClusterMerge,
+        stage="consolidate",
+        parent=parent,
+        label=_cluster_label(signals),
     )
 
     if result.merge or len(signals) == 1:
@@ -252,6 +271,7 @@ async def merge_cluster(
                 senders=senders,
                 instructions=instructions,
                 operator=operator,
+                parent=AGENT,
             )
         )
     log.info("cluster split", into=len(todos), calls=len(groups) + 1)

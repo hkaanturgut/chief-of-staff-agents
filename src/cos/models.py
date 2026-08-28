@@ -355,6 +355,18 @@ class ModelCallLog(Contract):
     attempt: int = 1
     validation_error: str | None = None
 
+    # Delegation and timing. Defaulted because runs recorded before the console existed
+    # must still replay — `cos replay` reads these files and an added required field
+    # would make every historical run unparseable.
+    #
+    # `parent` is the logical delegator, not the calling function: the orchestrator for
+    # the ingest agents, the consolidator for the split calls it re-asks. That is what
+    # makes the run log a graph rather than a flat list.
+    stage: str = ""
+    parent: str | None = None
+    label: str | None = None
+    started_ms: int = 0
+
 
 class LedgerEntry(Contract):
     """Proof that an action was performed. The authority on what has already been sent."""

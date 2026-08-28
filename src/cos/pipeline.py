@@ -65,7 +65,13 @@ async def run_brief(
     now = now or datetime.now(UTC)
     window: Window = resolve(settings.window, now=now, lookback_hours=lookback_hours)
     recorder = RunRecorder(
-        run_id=new_run_id(now),
+        # Wall clock, deliberately not `now`. Under `--corpus`, `now` is the corpus's own
+        # frozen timestamp, so deriving the run id from it gave every corpus run the same
+        # id — and every rehearsal appended to one log file. The console then showed five
+        # runs added together: 147 calls, a wall clock shorter than one of them, and a
+        # cost five times the real figure. A run is identified by when it ran; the corpus
+        # only supplies what the data thinks "now" is.
+        run_id=new_run_id(),
         window_start=window.start,
         window_end=window.end,
         dry_run=settings.run.dry_run,

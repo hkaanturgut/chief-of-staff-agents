@@ -185,6 +185,9 @@ async def _extract_batch(
         instructions=definition.instructions,
         prompt=prompt,
         schema=Extraction,
+        stage="ingest",
+        parent="chief-of-staff",
+        label=f"{len(sources)} item(s)",
     )
     return _to_signals(extraction, sources, tz)
 

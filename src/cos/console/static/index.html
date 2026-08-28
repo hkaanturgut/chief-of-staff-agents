@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="en" data-theme="blueprint">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chief of Staff — console</title>
+<style>
+/* Same blueprint identity as the deck, so the two match on stage.
+   Cold blue is everything the machine does. Amber is only ever the human. */
+:root{
+  --ground:#0A1420; --panel:#101E2E; --panel-2:#16283B; --rule:#22405E;
+  --paper:#DCE8F5; --muted:#7C93AC; --dim:#4E637A;
+  --draw:#5FA8E8; --human:#F0A23C; --alert:#E0705C;
+  --ingest:#5FA8E8; --consolidate:#B08CFF; --draft:#56C9A8; --orchestrate:#DCE8F5;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:var(--ground); color:var(--paper);
+  font-family:var(--sans); font-size:15px; line-height:1.5;
+  background-image:
+    linear-gradient(rgba(34,64,94,.20) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(34,64,94,.20) 1px,transparent 1px);
+  background-size:64px 64px;
+}
+h1,h2,h3{margin:0; letter-spacing:-.015em; text-wrap:balance}
+.mono{font-family:var(--mono)}
+.tnum{font-variant-numeric:tabular-nums}
+
+#app{max-width:1560px; margin:0 auto; padding:22px 26px 60px; display:flex; flex-direction:column; gap:20px}
+
+/* —— header —— */
+header{display:flex; align-items:flex-end; gap:20px; flex-wrap:wrap;
+  border-bottom:1px solid var(--rule); padding-bottom:16px}
+header h1{font-size:25px; font-weight:700}
+header .sub{font-family:var(--mono); font-size:12px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted); margin-top:4px}
+.spacer{flex:1}
+select,button{font-family:var(--mono); font-size:13px; color:var(--paper);
+  background:var(--panel-2); border:1px solid var(--rule); border-radius:3px;
+  padding:8px 12px; cursor:pointer}
+select:focus-visible,button:focus-visible{outline:2px solid var(--draw); outline-offset:2px}
+button:hover:not(:disabled){border-color:var(--draw)}
+button:disabled{opacity:.4; cursor:not-allowed}
+.badge{font-family:var(--mono); font-size:11px; letter-spacing:.13em; text-transform:uppercase;
+  border:1px solid currentColor; border-radius:2px; padding:5px 10px; white-space:nowrap}
+.badge.dry{color:var(--draw)} .badge.live{color:var(--alert)}
+
+/* —— cards —— */
+.card{background:var(--panel); border:1px solid var(--rule); border-radius:4px; padding:18px 20px}
+.card > h2{font-size:13px; font-family:var(--mono); font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:14px}
+.cols{display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start}
+@media (max-width:1180px){.cols{grid-template-columns:1fr}}
+
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:1px;
+  background:var(--rule); border:1px solid var(--rule); border-radius:4px; overflow:hidden}
+.stat{background:var(--panel); padding:14px 16px}
+.stat .n{font-family:var(--mono); font-size:27px; font-weight:600; line-height:1.1;
+  color:var(--draw); font-variant-numeric:tabular-nums}
+.stat .n.warm{color:var(--human)}
+.stat .l{font-family:var(--mono); font-size:10px; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--muted); margin-top:5px}
+
+/* —— delegation graph —— */
+#graph{width:100%; height:auto; display:block; overflow:visible}
+.gnode rect{stroke-width:1.2}
+.gnode text.nm{font-family:var(--sans); font-size:13px; font-weight:600; fill:var(--paper)}
+.gnode text.mt{font-family:var(--mono); font-size:10px; fill:var(--muted); letter-spacing:.06em}
+.gedge{fill:none; stroke:var(--rule); stroke-width:1.4}
+.gedge.self{stroke:var(--consolidate); stroke-dasharray:3 3}
+.glabel{font-family:var(--mono); font-size:10px; fill:var(--dim)}
+
+/* —— timeline —— */
+#timeline{display:flex; flex-direction:column; gap:5px}
+.trow{display:grid; grid-template-columns:152px 1fr; gap:12px; align-items:center; min-height:26px}
+.trow .who{font-family:var(--mono); font-size:11px; color:var(--muted);
+  text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.track{position:relative; height:22px; background:var(--panel-2);
+  border:1px solid #1A3049; border-radius:2px}
+.bar{position:absolute; top:2px; bottom:2px; border-radius:2px; min-width:3px;
+  opacity:.85; cursor:pointer; transition:opacity .15s}
+.bar:hover,.bar:focus-visible{opacity:1; outline:1px solid var(--paper)}
+.bar.ingest{background:var(--ingest)} .bar.consolidate{background:var(--consolidate)}
+.bar.draft{background:var(--draft)} .bar.retry{background:var(--alert)}
+.bar.hidden{opacity:.08}
+.axis{display:grid; grid-template-columns:152px 1fr; gap:12px; margin-top:6px}
+.axis .ticks{display:flex; justify-content:space-between;
+  font-family:var(--mono); font-size:10px; color:var(--dim)}
+#tip{position:fixed; z-index:50; pointer-events:none; display:none;
+  background:#060D15; border:1px solid var(--rule); border-radius:3px;
+  padding:10px 12px; font-family:var(--mono); font-size:11px; line-height:1.65;
+  max-width:340px; box-shadow:0 8px 24px rgba(0,0,0,.5)}
+#tip b{color:var(--paper); font-weight:600}
+.legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:14px;
+  font-family:var(--mono); font-size:11px; color:var(--muted)}
+.legend i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px}
+
+/* —— lists —— */
+.item{border-top:1px solid #16293D; padding:13px 0; display:flex; gap:14px; align-items:flex-start}
+.item:first-of-type{border-top:0}
+.score{font-family:var(--mono); font-size:20px; font-weight:600; color:var(--draw);
+  min-width:38px; text-align:right; font-variant-numeric:tabular-nums}
+.score.hot{color:var(--human)}
+.item .t{font-size:15px; font-weight:500; line-height:1.35}
+.item .m{font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:4px}
+.pill{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  border:1px solid currentColor; border-radius:2px; padding:2px 7px; white-space:nowrap}
+.pill.high{color:var(--alert)} .pill.medium{color:var(--human)} .pill.low{color:var(--muted)}
+.pill.needs{color:var(--human)}
+
+details.draft{border-top:1px solid #16293D; padding:12px 0}
+details.draft:first-of-type{border-top:0}
+details.draft summary{cursor:pointer; display:flex; gap:12px; align-items:center; list-style:none}
+details.draft summary::-webkit-details-marker{display:none}
+details.draft summary::before{content:"▸"; color:var(--dim); font-size:11px; flex:none}
+details.draft[open] summary::before{content:"▾"}
+details.draft .body{margin-top:12px; background:#070E16; border:1px solid var(--rule);
+  border-radius:3px; padding:14px 16px; font-family:var(--mono); font-size:12.5px;
+  line-height:1.7; white-space:pre-wrap; color:#B9CBDD; max-height:320px; overflow:auto}
+.grow{flex:1; min-width:0}
+.truncate{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+/* —— gates —— */
+#gates .gate{border:1px solid var(--rule); border-radius:3px; padding:15px 17px; margin-bottom:12px}
+#gates .gate.armed{border-color:var(--human); background:#1E1710}
+#gates .gate h3{font-size:15px; margin-bottom:3px}
+#gates .gate .m{font-family:var(--mono); font-size:11px; color:var(--muted)}
+#gates .row{display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:12px}
+button.approve{background:var(--human); color:#160E03; border-color:var(--human);
+  font-weight:600; letter-spacing:.06em; padding:10px 20px; text-transform:uppercase; font-size:12px}
+button.approve:hover:not(:disabled){background:#FFBB5C}
+button.merge{border-color:var(--draw); color:var(--draw)}
+.note{font-family:var(--mono); font-size:11px; color:var(--muted); line-height:1.7}
+.err{color:var(--alert); font-family:var(--mono); font-size:12px}
+.empty{color:var(--dim); font-family:var(--mono); font-size:12px; padding:6px 0}
+a{color:var(--draw)}
+#toast{position:fixed; right:20px; bottom:20px; z-index:60; display:none;
+  background:#060D15; border:1px solid var(--rule); border-left:3px solid var(--draw);
+  border-radius:3px; padding:13px 17px; font-family:var(--mono); font-size:12px; max-width:420px}
+#toast.bad{border-left-color:var(--alert)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div>
+      <h1>Chief of Staff</h1>
+      <div class="sub" id="repoLabel">loading…</div>
+    </div>
+    <div class="spacer"></div>
+    <select id="runPick" aria-label="Run"></select>
+    <button id="refresh">Refresh</button>
+    <span id="modeBadge" class="badge dry">dry run</span>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <section class="card">
+    <h2>Delegation — who called whom</h2>
+    <svg id="graph" viewBox="0 0 1000 300" role="img" aria-label="Agent delegation graph"></svg>
+    <div class="legend">
+      <span><i style="background:var(--ingest)"></i>ingest</span>
+      <span><i style="background:var(--consolidate)"></i>consolidate</span>
+      <span><i style="background:var(--draft)"></i>draft</span>
+      <span><i style="background:var(--alert)"></i>validation retry</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Timeline — every model call, placed in real time</h2>
+    <div id="timeline"></div>
+    <div class="axis"><div></div><div class="ticks" id="ticks"></div></div>
+    <p class="note" id="concurrencyNote"></p>
+  </section>
+
+  <div class="cols">
+    <section class="card">
+      <h2>The brief</h2>
+      <div id="todos"></div>
+    </section>
+
+    <section class="card">
+      <h2>Pending — waiting on a decision</h2>
+      <div id="drafts"></div>
+    </section>
+  </div>
+
+  <section class="card" id="gates">
+    <h2>The two gates</h2>
+    <div id="gateBody"></div>
+    <p class="note">
+      Approving here uses <b>your</b> <span class="mono">gh</span> credential — the same call
+      github.com makes when you click Approve. The console holds no send authority of its own:
+      the Azure token that permits a send is issued by GitHub only after this approval.
+    </p>
+  </section>
+
+</div>
+
+<div id="tip"></div>
+<div id="toast"></div>
+
+<script>
+"use strict";
+
+var STAGE_CLASS = {ingest:"ingest", consolidate:"consolidate", draft:"draft"};
+var STAGE_COLOR = {
+  ingest:"var(--ingest)", consolidate:"var(--consolidate)",
+  draft:"var(--draft)", orchestrate:"var(--orchestrate)"
+};
+
+var state = {run:null, outbox:null, gates:null, runs:[]};
+
+function $(id){ return document.getElementById(id); }
+function el(tag, cls, text){
+  var n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+function fmtMs(ms){ return ms >= 1000 ? (ms/1000).toFixed(1) + "s" : ms + "ms"; }
+function money(v){ return "$" + (v || 0).toFixed(3); }
+
+function toast(msg, bad){
+  var t = $("toast");
+  t.textContent = msg;
+  t.className = bad ? "bad" : "";
+  t.style.display = "block";
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ t.style.display = "none"; }, 6000);
+}
+
+async function api(path, opts){
+  var res = await fetch(path, opts);
+  var data = null;
+  try { data = await res.json(); } catch (e) { data = null; }
+  if (!res.ok) throw new Error((data && data.error) || ("HTTP " + res.status));
+  return data;
+}
+
+/* ——— stats ——— */
+function renderStats(){
+  var box = $("stats");
+  box.textContent = "";
+  var r = state.run;
+  if (!r || !r.totals) return;
+  var t = r.totals;
+  var m = (r.brief && r.brief.manifest) || {};
+  var rows = [
+    ["calls", t.calls, false],
+    ["tokens", (t.tokens || 0).toLocaleString(), false],
+    ["cost", money(t.cost), false],
+    ["wall clock", t.wall_ms == null ? "—" : fmtMs(t.wall_ms), false],
+    ["signals", m.signals != null ? m.signals : "—", false],
+    ["clusters", m.clusters != null ? m.clusters : "—", false],
+    ["to-dos", m.todos != null ? m.todos : "—", true],
+    ["retries", t.retries, t.retries > 0]
+  ];
+  rows.forEach(function(row){
+    var s = el("div", "stat");
+    var n = el("div", "n" + (row[2] ? " warm" : ""), String(row[1]));
+    s.appendChild(n);
+    s.appendChild(el("div", "l", row[0]));
+    box.appendChild(s);
+  });
+}
+
+/* ——— delegation graph ——— */
+function renderGraph(){
+  var svg = $("graph");
+  svg.textContent = "";
+  var r = state.run;
+  if (!r || !r.nodes || !r.nodes.length) return;
+
+  var NS = "http://www.w3.org/2000/svg";
+  var byStage = {orchestrate:[], ingest:[], consolidate:[], draft:[], other:[]};
+  r.nodes.forEach(function(n){
+    var key = byStage[n.stage] ? n.stage : (n.id === "chief-of-staff" ? "orchestrate" : "other");
+    byStage[key].push(n);
+  });
+
+  var lanes = [
+    {key:"orchestrate", y:26},
+    {key:"ingest",      y:118},
+    {key:"consolidate", y:200},
+    {key:"draft",       y:200}
+  ];
+  // consolidate and draft share a row only when one of them is empty; otherwise stack.
+  if (byStage.consolidate.length && byStage.draft.length) lanes[3].y = 262;
+
+  var W = 1000, boxW = 176, boxH = 50;
+  var pos = {};
+  var maxY = 0;
+
+  lanes.forEach(function(lane){
+    var group = byStage[lane.key] || [];
+    if (!group.length) return;
+    var span = W / group.length;
+    group.forEach(function(n, i){
+      pos[n.id] = {x: span * i + span / 2, y: lane.y, stage: lane.key, node: n};
+      maxY = Math.max(maxY, lane.y + boxH);
+    });
+  });
+  byStage.other.forEach(function(n, i){
+    if (!pos[n.id]) { pos[n.id] = {x: 120 + i * 200, y: maxY + 60, stage:"other", node:n}; maxY += 60; }
+  });
+
+  svg.setAttribute("viewBox", "0 0 " + W + " " + (maxY + 26));
+
+  // edges first, so nodes sit on top
+  (r.edges || []).forEach(function(e){
+    var a = pos[e.source], b = pos[e.target];
+    if (!a || !b) return;
+    var path = document.createElementNS(NS, "path");
+    if (e.source === e.target) {
+      // Self-delegation: the consolidator re-asking the groups of a split.
+      var cx = a.x + boxW / 2;
+      path.setAttribute("d", "M" + cx + "," + (a.y + 12) +
+        " C" + (cx + 74) + "," + (a.y - 6) + " " + (cx + 74) + "," + (a.y + boxH - 6) +
+        " " + cx + "," + (a.y + boxH - 12));
+      path.setAttribute("class", "gedge self");
+    } else {
+      path.setAttribute("d", "M" + a.x + "," + (a.y + boxH) + " C" + a.x + "," + (a.y + boxH + 30) +
+        " " + b.x + "," + (b.y - 30) + " " + b.x + "," + b.y);
+      path.setAttribute("class", "gedge");
+    }
+    svg.appendChild(path);
+
+    var mid = document.createElementNS(NS, "text");
+    mid.setAttribute("class", "glabel");
+    mid.setAttribute("text-anchor", "middle");
+    if (e.source === e.target) {
+      mid.setAttribute("x", String(a.x + boxW / 2 + 82));
+      mid.setAttribute("y", String(a.y + boxH / 2 + 3));
+    } else {
+      mid.setAttribute("x", String((a.x + b.x) / 2 + 10));
+      mid.setAttribute("y", String((a.y + boxH + b.y) / 2 + 3));
+    }
+    mid.textContent = "×" + e.count;
+    svg.appendChild(mid);
+  });
+
+  Object.keys(pos).forEach(function(id){
+    var p = pos[id], n = p.node;
+    var g = document.createElementNS(NS, "g");
+    g.setAttribute("class", "gnode");
+    g.setAttribute("transform", "translate(" + (p.x - boxW / 2) + "," + p.y + ")");
+
+    var rect = document.createElementNS(NS, "rect");
+    rect.setAttribute("width", String(boxW));
+    rect.setAttribute("height", String(boxH));
+    rect.setAttribute("rx", "3");
+    rect.setAttribute("fill", "var(--panel-2)");
+    rect.setAttribute("stroke", STAGE_COLOR[p.stage] || "var(--rule)");
+    g.appendChild(rect);
+
+    var nm = document.createElementNS(NS, "text");
+    nm.setAttribute("class", "nm");
+    nm.setAttribute("x", "13"); nm.setAttribute("y", "21");
+    nm.textContent = id;
+    g.appendChild(nm);
+
+    var mt = document.createElementNS(NS, "text");
+    mt.setAttribute("class", "mt");
+    mt.setAttribute("x", "13"); mt.setAttribute("y", "38");
+    mt.textContent = n.calls
+      ? n.calls + " call" + (n.calls === 1 ? "" : "s") + " · " + n.tokens.toLocaleString() + " tok · " + money(n.cost)
+      : "routes · no model call";
+    g.appendChild(mt);
+
+    svg.appendChild(g);
+  });
+}
+
+/* ——— timeline ——— */
+function renderTimeline(){
+  var wrap = $("timeline");
+  wrap.textContent = "";
+  var r = state.run;
+  if (!r || !r.calls || !r.calls.length) {
+    wrap.appendChild(el("div", "empty", "No model calls recorded for this run."));
+    $("ticks").textContent = "";
+    $("concurrencyNote").textContent = "";
+    return;
+  }
+
+  var span = Math.max(r.span_ms || 1, 1);
+  var agents = [];
+  r.calls.forEach(function(c){ if (agents.indexOf(c.agent) === -1) agents.push(c.agent); });
+
+  // Without recorded offsets every call sits at zero. Stack them instead, and the note
+  // below the chart says that is what happened.
+  var offsets = {};
+  if (!r.has_timing) {
+    var cursor = 0;
+    r.calls.forEach(function(c, i){ offsets[i] = cursor; cursor += c.latency_ms; });
+  }
+
+  agents.forEach(function(agent){
+    var row = el("div", "trow");
+    row.appendChild(el("div", "who", agent));
+    var track = el("div", "track");
+    r.calls.forEach(function(c, i){
+      if (c.agent !== agent) return;
+      var bar = el("button", "bar " + (c.failed_validation ? "retry" : (STAGE_CLASS[c.stage] || "ingest")));
+      var at = r.has_timing ? c.started_ms : offsets[i];
+      bar.style.left = (at / span * 100) + "%";
+      bar.style.width = Math.max(c.latency_ms / span * 100, 0.4) + "%";
+      bar.setAttribute("aria-label", agent + " " + fmtMs(c.latency_ms));
+      bar.addEventListener("mouseenter", function(ev){ showTip(ev, c); });
+      bar.addEventListener("focus", function(ev){ showTip(ev, c); });
+      bar.addEventListener("mouseleave", hideTip);
+      bar.addEventListener("blur", hideTip);
+      track.appendChild(bar);
+    });
+    row.appendChild(track);
+    wrap.appendChild(row);
+  });
+
+  var ticks = $("ticks");
+  ticks.textContent = "";
+  for (var i = 0; i <= 4; i++) ticks.appendChild(el("span", "", fmtMs(Math.round(span * i / 4))));
+
+  var seq = r.totals.sequential_ms || 0;
+  if (!r.has_timing) {
+    // Be explicit rather than drawing a plausible-looking lie.
+    $("concurrencyNote").textContent =
+      "This run was recorded before call timing existed, so the bars are laid end to end " +
+      "rather than placed in real time. Re-run to see the true concurrency.";
+  } else if (seq > span) {
+    $("concurrencyNote").textContent =
+      "Sequential, these calls would take " + fmtMs(seq) + ". Run concurrently they take " +
+      fmtMs(span) + " — the ingest agents fan out together, and so does every cluster.";
+  } else {
+    $("concurrencyNote").textContent = "";
+  }
+}
+
+function showTip(ev, c){
+  var tip = $("tip");
+  tip.textContent = "";
+  var lines = [
+    ["", c.agent + (c.attempt > 1 ? "  attempt " + c.attempt : "")],
+    ["called by", c.parent],
+    ["stage", c.stage || "—"],
+    ["model", c.model + " " + c.model_version],
+    ["latency", fmtMs(c.latency_ms) + "  at +" + fmtMs(c.started_ms)],
+    ["tokens", c.input_tokens + " in / " + c.output_tokens + " out"],
+    ["cost", money(c.cost)]
+  ];
+  if (c.label) lines.push(["subject", c.label]);
+  if (c.failed_validation) lines.push(["", "failed schema validation — retried"]);
+
+  lines.forEach(function(l){
+    var d = el("div");
+    if (l[0]) { d.appendChild(el("span", "", l[0] + "  ")); }
+    var b = el("b", "", l[1]);
+    d.appendChild(b);
+    tip.appendChild(d);
+  });
+
+  tip.style.display = "block";
+  var r = ev.target.getBoundingClientRect();
+  var top = r.bottom + 10;
+  if (top + tip.offsetHeight > window.innerHeight) top = r.top - tip.offsetHeight - 10;
+  tip.style.top = top + "px";
+  tip.style.left = Math.min(r.left, window.innerWidth - tip.offsetWidth - 16) + "px";
+}
+function hideTip(){ $("tip").style.display = "none"; }
+
+/* ——— brief ——— */
+function renderTodos(){
+  var box = $("todos");
+  box.textContent = "";
+  var todos = (state.run && state.run.brief && state.run.brief.todos) || [];
+  if (!todos.length) {
+    box.appendChild(el("div", "empty", "No brief recorded for this run. Run `cos brief` or `cos propose --corpus`."));
+    return;
+  }
+  todos.forEach(function(t){
+    var item = el("div", "item");
+    var s = el("div", "score" + (t.urgency >= 70 ? " hot" : ""), String(t.urgency));
+    item.appendChild(s);
+
+    var body = el("div", "grow");
+    body.appendChild(el("div", "t", t.title));
+    var bits = [];
+    if (t.due) bits.push("due " + new Date(t.due).toLocaleDateString(undefined, {weekday:"short", day:"numeric", month:"short"}));
+    bits.push((t.sources ? t.sources.length : 0) + " source" + ((t.sources && t.sources.length === 1) ? "" : "s"));
+    bits.push(t.suggested_action || "no action");
+    body.appendChild(el("div", "m", bits.join("  ·  ")));
+    item.appendChild(body);
+
+    if (t.needs_human_judgment) item.appendChild(el("span", "pill needs", "needs you"));
+    box.appendChild(item);
+  });
+}
+
+/* ——— drafts ——— */
+function renderDrafts(){
+  var box = $("drafts");
+  box.textContent = "";
+  var o = state.outbox;
+  if (!o || !o.items || !o.items.length) {
+    box.appendChild(el("div", "empty", "Nothing pending. `cos propose` writes drafts here."));
+  } else {
+    o.items.forEach(function(d){
+      var det = el("details", "draft");
+      var sum = el("summary");
+      sum.appendChild(el("span", "pill " + d.risk, d.risk));
+      var g = el("div", "grow");
+      g.appendChild(el("div", "t truncate", d.subject || d.kind));
+      g.appendChild(el("div", "m truncate", d.kind + "  ·  " + (d.recipients.join(", ") || "no recipient") + "  ·  " + d.file));
+      sum.appendChild(g);
+      if (d.needs_you) sum.appendChild(el("span", "pill needs", "needs you"));
+      det.appendChild(sum);
+      det.appendChild(el("div", "body", d.body || "(empty body)"));
+      box.appendChild(det);
+    });
+  }
+  (o && o.broken ? o.broken : []).forEach(function(b){
+    box.appendChild(el("div", "err", b.file + " — " + b.error));
+  });
+}
+
+/* ——— gates ——— */
+function renderGates(){
+  var box = $("gateBody");
+  box.textContent = "";
+  var g = state.gates;
+  if (!g) { box.appendChild(el("div", "empty", "Reading gates…")); return; }
+
+  $("repoLabel").textContent = g.repo + (g.user ? "   ·   gh as " + g.user : "");
+  var badge = $("modeBadge");
+  badge.textContent = g.dry_run ? "dry run" : "live send";
+  badge.className = "badge " + (g.dry_run ? "dry" : "live");
+
+  if (g.error) box.appendChild(el("div", "err", g.error));
+
+  // Gate 1 — open pull requests
+  var g1 = el("div", "gate" + ((g.pulls && g.pulls.length) ? " armed" : ""));
+  g1.appendChild(el("h3", "", "Gate 1 — a human merges"));
+  if (!g.pulls || !g.pulls.length) {
+    g1.appendChild(el("div", "m", "No open pull request. `cos propose` opens one."));
+  } else {
+    g.pulls.forEach(function(pr){
+      var row = el("div", "row");
+      var info = el("div", "grow");
+      info.appendChild(el("div", "t truncate", "#" + pr.number + "  " + pr.title));
+      info.appendChild(el("div", "m truncate", pr.headRefName));
+      row.appendChild(info);
+      var open = el("button", "", "Open");
+      open.addEventListener("click", function(){ window.open(pr.url, "_blank", "noopener"); });
+      row.appendChild(open);
+      var mg = el("button", "merge", "Merge");
+      mg.addEventListener("click", function(){ doMerge(pr.number, mg); });
+      row.appendChild(mg);
+      g1.appendChild(row);
+    });
+  }
+  box.appendChild(g1);
+
+  // Gate 2 — the protected environment
+  var waiting = g.waiting || [];
+  var g2 = el("div", "gate" + (waiting.length ? " armed" : ""));
+  g2.appendChild(el("h3", "", "Gate 2 — a human approves the protected environment"));
+  if (!waiting.length) {
+    g2.appendChild(el("div", "m", "No run is waiting. A merge to main starts `execute`, which halts here."));
+  } else {
+    waiting.forEach(function(run){
+      (run.environments || []).forEach(function(env){
+        var row = el("div", "row");
+        var info = el("div", "grow");
+        info.appendChild(el("div", "t truncate", run.displayTitle || ("run " + run.databaseId)));
+        info.appendChild(el("div", "m", "environment " + env.environment +
+          (env.current_user_can_approve ? "" : "  ·  you are not a reviewer for this environment")));
+        row.appendChild(info);
+
+        var open = el("button", "", "Open");
+        open.addEventListener("click", function(){ window.open(run.url, "_blank", "noopener"); });
+        row.appendChild(open);
+
+        var btn = el("button", "approve", "Approve send");
+        btn.disabled = !env.current_user_can_approve || !env.environment_id;
+        btn.addEventListener("click", function(){
+          doApprove(run.databaseId, env.environment_id, btn);
+        });
+        row.appendChild(btn);
+        g2.appendChild(row);
+      });
+    });
+  }
+  box.appendChild(g2);
+}
+
+async function doApprove(runId, envId, btn){
+  if (!window.confirm(
+      "Approve the protected send environment?\n\n" +
+      "This releases the execute workflow. It will perform every approved action in " +
+      "outbox/pending that passes the allowlist, the ledger, and the cap.")) return;
+  btn.disabled = true;
+  btn.textContent = "Approving…";
+  try {
+    await api("/api/approve", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "X-Console": "1"},
+      body: JSON.stringify({run_id: runId, environment_id: envId})
+    });
+    toast("Approved. The execute workflow is running.");
+    setTimeout(loadGates, 1500);
+  } catch (e) {
+    toast(String(e.message || e), true);
+    btn.disabled = false;
+    btn.textContent = "Approve send";
+  }
+}
+
+async function doMerge(number, btn){
+  if (!window.confirm("Merge pull request #" + number + "?")) return;
+  btn.disabled = true;
+  btn.textContent = "Merging…";
+  try {
+    await api("/api/merge", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "X-Console": "1"},
+      body: JSON.stringify({number: number})
+    });
+    toast("Merged #" + number + ". Watch gate 2 for the execute run.");
+    setTimeout(loadGates, 1500);
+  } catch (e) {
+    toast(String(e.message || e), true);
+    btn.disabled = false;
+    btn.textContent = "Merge";
+  }
+}
+
+/* ——— loading ——— */
+async function loadRun(runId){
+  state.run = await api("/api/run" + (runId ? "?id=" + encodeURIComponent(runId) : ""));
+  renderStats(); renderGraph(); renderTimeline(); renderTodos();
+}
+
+async function loadRuns(){
+  var data = await api("/api/runs");
+  state.runs = data.runs || [];
+  var pick = $("runPick");
+  var current = pick.value;
+  pick.textContent = "";
+  state.runs.forEach(function(id){
+    var opt = el("option", "", id);
+    opt.value = id;
+    pick.appendChild(opt);
+  });
+  if (current && state.runs.indexOf(current) !== -1) pick.value = current;
+}
+
+async function loadOutbox(){
+  state.outbox = await api("/api/outbox");
+  renderDrafts();
+}
+
+async function loadGates(){
+  try {
+    state.gates = await api("/api/gates");
+  } catch (e) {
+    state.gates = {repo:"?", pulls:[], waiting:[], error:String(e.message || e), dry_run:true};
+  }
+  renderGates();
+}
+
+async function refreshAll(){
+  await loadRuns();
+  await loadRun($("runPick").value);
+  await loadOutbox();
+  await loadGates();
+}
+
+$("runPick").addEventListener("change", function(){ loadRun(this.value).catch(function(e){ toast(String(e), true); }); });
+$("refresh").addEventListener("click", function(){ refreshAll().catch(function(e){ toast(String(e), true); }); });
+
+refreshAll().catch(function(e){ toast(String(e.message || e), true); });
+// Gates are the only thing that changes without you doing something locally.
+setInterval(function(){ loadGates(); }, 6000);
+</script>
+</body>
+</html>

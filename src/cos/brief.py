@@ -7,6 +7,10 @@ could not see.
 
 from __future__ import annotations
 
+import contextlib
+import json
+
+from cos.logging import run_brief_path
 from cos.models import RunManifest, TodoItem
 from cos.settings import REPO_ROOT, StalenessSettings
 
@@ -132,4 +136,19 @@ def render(todos: list[TodoItem], manifest: RunManifest, staleness: StalenessSet
 def write(todos: list[TodoItem], manifest: RunManifest, staleness: StalenessSettings) -> str:
     content = render(todos, manifest, staleness)
     BRIEF_PATH.write_text(content)
+    write_json(todos, manifest)
     return content
+
+
+def write_json(todos: list[TodoItem], manifest: RunManifest) -> None:
+    """Emit the same run as JSON, for `cos console`.
+
+    Best effort on purpose: the console is an observer, and a failure to write
+    its input must never take down a run that has already produced the brief.
+    """
+    payload = {
+        "manifest": manifest.model_dump(mode="json"),
+        "todos": [t.model_dump(mode="json") for t in todos],
+    }
+    with contextlib.suppress(OSError):
+        run_brief_path(manifest.run_id).write_text(json.dumps(payload, indent=2))
