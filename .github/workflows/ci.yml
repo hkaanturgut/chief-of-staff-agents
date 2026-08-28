@@ -1,0 +1,47 @@
+name: ci
+
+# No credentials. No Azure login. No Graph token. The whole suite replays from
+# recorded fixtures, so a pull request from a fork is as safe to run as one from a
+# branch, and an accidental live call is a test failure rather than a silent pass.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Install
+        run: uv sync --frozen --extra dev
+
+      - name: Lint
+        run: uv run ruff check src tests scripts
+
+      - name: Format check
+        run: uv run ruff format --check src tests scripts
+
+      - name: Types
+        run: uv run mypy
+
+      - name: Schemas are current
+        run: uv run python scripts/export_schemas.py --check
+
+      - name: Tests
+        # `live` is excluded: those need a real tenant, and CI has none by design.
+        run: uv run pytest -m "not live" -q

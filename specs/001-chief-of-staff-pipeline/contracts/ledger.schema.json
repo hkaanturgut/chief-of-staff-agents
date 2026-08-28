@@ -1,0 +1,92 @@
+{
+  "$defs": {
+    "LedgerEntry": {
+      "additionalProperties": false,
+      "description": "Proof that an action was performed. The authority on what has already been sent.",
+      "properties": {
+        "action_id": {
+          "maxLength": 26,
+          "minLength": 26,
+          "title": "Action Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "send_mail",
+            "reply_mail",
+            "create_event",
+            "post_chat",
+            "create_issue"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "performed_at": {
+          "format": "date-time",
+          "title": "Performed At",
+          "type": "string"
+        },
+        "pr_number": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pr Number"
+        },
+        "receipt_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Receipt Id"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Id"
+        },
+        "todo_id": {
+          "title": "Todo Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action_id",
+        "todo_id",
+        "kind",
+        "performed_at"
+      ],
+      "title": "LedgerEntry",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/LedgerEntry"
+      },
+      "title": "Entries",
+      "type": "array"
+    }
+  },
+  "title": "Ledger",
+  "type": "object"
+}

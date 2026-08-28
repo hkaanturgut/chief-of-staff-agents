@@ -1,0 +1,632 @@
+{
+ "now": "2026-08-26T09:00:00+00:00",
+ "operator": "kaan@demo.example",
+ "mail": [
+  {
+   "id": "m01",
+   "conversation_id": "t-renewal",
+   "internet_message_id": "<m01@demo>",
+   "subject": "Q3 vendor renewal \u2014 PROJ-1421",
+   "from_address": "priya@northwind-demo.example",
+   "from_name": "Priya Raman",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-22T09:00:00+00:00",
+   "body_text": "Hi Kaan,\n\nBefore I send the Q3 pack upstream I need the confirmed renewal number for PROJ-1421. Finance have the old figure and I don't want to hand that over.\n\nCan you confirm it?\n\nPriya",
+   "web_link": "https://outlook.office.com/mail/id/m01",
+   "is_from_operator": false
+  },
+  {
+   "id": "m02",
+   "conversation_id": "t-renewal",
+   "internet_message_id": "<m02@demo>",
+   "subject": "Re: Q3 vendor renewal \u2014 PROJ-1421",
+   "from_address": "priya@northwind-demo.example",
+   "from_name": "Priya Raman",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-24T09:00:00+00:00",
+   "body_text": "Bumping this \u2014 still need the PROJ-1421 number.\n\nPriya",
+   "web_link": "https://outlook.office.com/mail/id/m02",
+   "is_from_operator": false
+  },
+  {
+   "id": "m03",
+   "conversation_id": "t-renewal",
+   "internet_message_id": "<m03@demo>",
+   "subject": "Re: Q3 vendor renewal \u2014 PROJ-1421",
+   "from_address": "dana@northwind-demo.example",
+   "from_name": "Dana Okafor",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-25T06:00:00+00:00",
+   "body_text": "Hold on. I think we should cancel the renewal entirely and move to Northwind's new tier. Kaan \u2014 can you put together the comparison before we commit either way?",
+   "web_link": "https://outlook.office.com/mail/id/m03",
+   "is_from_operator": false
+  },
+  {
+   "id": "m10",
+   "conversation_id": "t-budget",
+   "internet_message_id": "<m10@demo>",
+   "subject": "Budget review \u2014 headcount lines",
+   "from_address": "marcus@demo.example",
+   "from_name": "Marcus Bell",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-20T09:00:00+00:00",
+   "body_text": "Team,\n\nAttaching the first cut of the headcount lines. Comments by end of week please.",
+   "web_link": "https://outlook.office.com/mail/id/m10",
+   "is_from_operator": false
+  },
+  {
+   "id": "m11",
+   "conversation_id": "t-budget",
+   "internet_message_id": "<m11@demo>",
+   "subject": "Re: Budget review \u2014 headcount lines",
+   "from_address": "aisha@demo.example",
+   "from_name": "Aisha Rahman",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-20T11:00:00+00:00",
+   "body_text": "Row 14 looks off to me \u2014 that contractor was offboarded in June.",
+   "web_link": "https://outlook.office.com/mail/id/m11",
+   "is_from_operator": false
+  },
+  {
+   "id": "m12",
+   "conversation_id": "t-budget",
+   "internet_message_id": "<m12@demo>",
+   "subject": "Re: Budget review \u2014 headcount lines",
+   "from_address": "marcus@demo.example",
+   "from_name": "Marcus Bell",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-21T09:00:00+00:00",
+   "body_text": "Good catch. Anyone able to redo the totals?",
+   "web_link": "https://outlook.office.com/mail/id/m12",
+   "is_from_operator": false
+  },
+  {
+   "id": "m13",
+   "conversation_id": "t-budget",
+   "internet_message_id": "<m13@demo>",
+   "subject": "Re: Budget review \u2014 headcount lines",
+   "from_address": "kaan@demo.example",
+   "from_name": "Kaan Turgut",
+   "to": [
+    "marcus@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-21T10:00:00+00:00",
+   "body_text": "I'll take it. I'll send the revised numbers by Friday.\n\nKaan",
+   "web_link": "https://outlook.office.com/mail/id/m13",
+   "is_from_operator": true
+  },
+  {
+   "id": "m14",
+   "conversation_id": "t-budget",
+   "internet_message_id": "<m14@demo>",
+   "subject": "Re: Budget review \u2014 headcount lines",
+   "from_address": "aisha@demo.example",
+   "from_name": "Aisha Rahman",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-22T09:00:00+00:00",
+   "body_text": "Thanks both. Also \u2014 unrelated \u2014 has anyone seen the new office layout plan?",
+   "web_link": "https://outlook.office.com/mail/id/m14",
+   "is_from_operator": false
+  },
+  {
+   "id": "m15",
+   "conversation_id": "t-budget",
+   "internet_message_id": "<m15@demo>",
+   "subject": "Re: Budget review \u2014 headcount lines",
+   "from_address": "marcus@demo.example",
+   "from_name": "Marcus Bell",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-22T12:00:00+00:00",
+   "body_text": "It's in the shared drive somewhere. Anyway, thanks Kaan.",
+   "web_link": "https://outlook.office.com/mail/id/m15",
+   "is_from_operator": false
+  },
+  {
+   "id": "m20",
+   "conversation_id": "t-m20",
+   "internet_message_id": "<m20@demo>",
+   "subject": "\u26a0\ufe0f URGENT: Your Q3 Innovation Digest has arrived!",
+   "from_address": "comms@demo.example",
+   "from_name": "Internal Comms",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-25T03:00:00+00:00",
+   "body_text": "Don't miss it! Our biggest issue yet \u2014 packed with insight you can't afford to ignore. ACT NOW and read before the quarter closes!\n\n(No response needed.)",
+   "web_link": "https://outlook.office.com/mail/id/m20",
+   "is_from_operator": false
+  },
+  {
+   "id": "m21",
+   "conversation_id": "t-m21",
+   "internet_message_id": "<m21@demo>",
+   "subject": "IMPORTANT \u2014 mandatory reading",
+   "from_address": "comms@demo.example",
+   "from_name": "Internal Comms",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-24T05:00:00+00:00",
+   "body_text": "Please find attached the updated desk booking guidelines. No action required.",
+   "web_link": "https://outlook.office.com/mail/id/m21",
+   "is_from_operator": false
+  },
+  {
+   "id": "m30",
+   "conversation_id": "t-m30",
+   "internet_message_id": "<m30@demo>",
+   "subject": "Invoice INV-88421 \u2014 overdue, escalating",
+   "from_address": "billing@meridian-demo.example",
+   "from_name": "Meridian Billing",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-25T07:00:00+00:00",
+   "body_text": "Dear Kaan,\n\nInvoice INV-88421 for CAD 47,500 remains unpaid 45 days past terms. Unless payment or a written commitment reaches us by Thursday we will suspend the service and refer the account.\n\nMeridian Accounts Receivable",
+   "web_link": "https://outlook.office.com/mail/id/m30",
+   "is_from_operator": false
+  },
+  {
+   "id": "m31",
+   "conversation_id": "t-m31",
+   "internet_message_id": "<m31@demo>",
+   "subject": "Sponsorship ask \u2014 Cloud Summit afterparty",
+   "from_address": "events@demo.example",
+   "from_name": "Sofia Marchetti",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-24T08:00:00+00:00",
+   "body_text": "Kaan \u2014 would your team sponsor the afterparty? It's CAD 12,000 for the headline slot. I need a yes or no by Wednesday to hold it for you.",
+   "web_link": "https://outlook.office.com/mail/id/m31",
+   "is_from_operator": false
+  },
+  {
+   "id": "m40",
+   "conversation_id": "t-m40",
+   "internet_message_id": "<m40@demo>",
+   "subject": "Standup notes \u2014 Tuesday",
+   "from_address": "jo@demo.example",
+   "from_name": "Jo Lindqvist",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-23T09:00:00+00:00",
+   "body_text": "Notes attached. Nothing blocking.",
+   "web_link": "https://outlook.office.com/mail/id/m40",
+   "is_from_operator": false
+  },
+  {
+   "id": "m41",
+   "conversation_id": "t-m41",
+   "internet_message_id": "<m41@demo>",
+   "subject": "Re: VPN cert rotation",
+   "from_address": "raj@demo.example",
+   "from_name": "Raj Patel",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-23T05:00:00+00:00",
+   "body_text": "Rotated. No action for you.",
+   "web_link": "https://outlook.office.com/mail/id/m41",
+   "is_from_operator": false
+  },
+  {
+   "id": "m42",
+   "conversation_id": "t-m42",
+   "internet_message_id": "<m42@demo>",
+   "subject": "Lunch?",
+   "from_address": "jo@demo.example",
+   "from_name": "Jo Lindqvist",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-24T02:00:00+00:00",
+   "body_text": "Thursday? No worries if not.",
+   "web_link": "https://outlook.office.com/mail/id/m42",
+   "is_from_operator": false
+  },
+  {
+   "id": "m43",
+   "conversation_id": "t-m43",
+   "internet_message_id": "<m43@demo>",
+   "subject": "PROJ-1390 closed",
+   "from_address": "jira@demo.example",
+   "from_name": "Jira",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-22T07:00:00+00:00",
+   "body_text": "PROJ-1390 was closed by Raj Patel.",
+   "web_link": "https://outlook.office.com/mail/id/m43",
+   "is_from_operator": false
+  },
+  {
+   "id": "m44",
+   "conversation_id": "t-m44",
+   "internet_message_id": "<m44@demo>",
+   "subject": "Your parking permit expires soon",
+   "from_address": "facilities@demo.example",
+   "from_name": "Facilities",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-24T00:00:00+00:00",
+   "body_text": "Your permit expires on 2026-09-30. Renew through the portal at your convenience.",
+   "web_link": "https://outlook.office.com/mail/id/m44",
+   "is_from_operator": false
+  },
+  {
+   "id": "m45",
+   "conversation_id": "t-m45",
+   "internet_message_id": "<m45@demo>",
+   "subject": "Re: Terraform module review",
+   "from_address": "raj@demo.example",
+   "from_name": "Raj Patel",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-25T01:00:00+00:00",
+   "body_text": "Left comments on https://github.com/demo-org/infra/pull/214 \u2014 nothing urgent.",
+   "web_link": "https://outlook.office.com/mail/id/m45",
+   "is_from_operator": false
+  },
+  {
+   "id": "m46",
+   "conversation_id": "t-m46",
+   "internet_message_id": "<m46@demo>",
+   "subject": "Weekly metrics",
+   "from_address": "reports@demo.example",
+   "from_name": "Reporting",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-24T23:00:00+00:00",
+   "body_text": "Automated weekly metrics attached.",
+   "web_link": "https://outlook.office.com/mail/id/m46",
+   "is_from_operator": false
+  },
+  {
+   "id": "m47",
+   "conversation_id": "t-m47",
+   "internet_message_id": "<m47@demo>",
+   "subject": "Re: Onboarding buddy for Sam",
+   "from_address": "hr@demo.example",
+   "from_name": "People Ops",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-21T09:00:00+00:00",
+   "body_text": "Confirming you're Sam Ito's onboarding buddy starting Monday. Nothing needed now.",
+   "web_link": "https://outlook.office.com/mail/id/m47",
+   "is_from_operator": false
+  },
+  {
+   "id": "m48",
+   "conversation_id": "t-m48",
+   "internet_message_id": "<m48@demo>",
+   "subject": "Coffee machine is fixed",
+   "from_address": "facilities@demo.example",
+   "from_name": "Facilities",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-23T22:00:00+00:00",
+   "body_text": "It lives.",
+   "web_link": "https://outlook.office.com/mail/id/m48",
+   "is_from_operator": false
+  },
+  {
+   "id": "m49",
+   "conversation_id": "t-m49",
+   "internet_message_id": "<m49@demo>",
+   "subject": "Re: PROJ-1421 access",
+   "from_address": "raj@demo.example",
+   "from_name": "Raj Patel",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-23T03:00:00+00:00",
+   "body_text": "Granted you write access on PROJ-1421.",
+   "web_link": "https://outlook.office.com/mail/id/m49",
+   "is_from_operator": false
+  },
+  {
+   "id": "m50",
+   "conversation_id": "t-m50",
+   "internet_message_id": "<m50@demo>",
+   "subject": "Security training reminder",
+   "from_address": "learning@demo.example",
+   "from_name": "Learning",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-22T04:00:00+00:00",
+   "body_text": "Annual training due 2026-10-15. You have plenty of time.",
+   "web_link": "https://outlook.office.com/mail/id/m50",
+   "is_from_operator": false
+  },
+  {
+   "id": "m51",
+   "conversation_id": "t-m51",
+   "internet_message_id": "<m51@demo>",
+   "subject": "Re: Northwind contract redlines",
+   "from_address": "legal@demo.example",
+   "from_name": "Legal",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-24T06:00:00+00:00",
+   "body_text": "We've reviewed. Nothing controversial. Copy in the drive.",
+   "web_link": "https://outlook.office.com/mail/id/m51",
+   "is_from_operator": false
+  },
+  {
+   "id": "m52",
+   "conversation_id": "t-m52",
+   "internet_message_id": "<m52@demo>",
+   "subject": "Out of office: Marcus Bell",
+   "from_address": "marcus@demo.example",
+   "from_name": "Marcus Bell",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-24T21:00:00+00:00",
+   "body_text": "I'm away 1-5 Sept.",
+   "web_link": "https://outlook.office.com/mail/id/m52",
+   "is_from_operator": false
+  },
+  {
+   "id": "m53",
+   "conversation_id": "t-budget",
+   "internet_message_id": "<m53@demo>",
+   "subject": "Re: Budget review \u2014 headcount lines",
+   "from_address": "jo@demo.example",
+   "from_name": "Jo Lindqvist",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-23T07:00:00+00:00",
+   "body_text": "Just catching up on this thread \u2014 all looks fine to me.",
+   "web_link": "https://outlook.office.com/mail/id/m53",
+   "is_from_operator": false
+  },
+  {
+   "id": "m54",
+   "conversation_id": "t-m54",
+   "internet_message_id": "<m54@demo>",
+   "subject": "Newsletter: Cloud Native Weekly",
+   "from_address": "news@demo.example",
+   "from_name": "Cloud Native Weekly",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-24T19:00:00+00:00",
+   "body_text": "This week: eBPF, WASM, and why your service mesh is too big.",
+   "web_link": "https://outlook.office.com/mail/id/m54",
+   "is_from_operator": false
+  },
+  {
+   "id": "m55",
+   "conversation_id": "t-m55",
+   "internet_message_id": "<m55@demo>",
+   "subject": "Re: Desk move",
+   "from_address": "facilities@demo.example",
+   "from_name": "Facilities",
+   "to": [
+    "kaan@demo.example"
+   ],
+   "cc": [],
+   "received_at": "2026-08-23T01:00:00+00:00",
+   "body_text": "You're on the window side now.",
+   "web_link": "https://outlook.office.com/mail/id/m55",
+   "is_from_operator": false
+  }
+ ],
+ "chat": [
+  {
+   "id": "c01",
+   "chat_id": "19:demo-chat",
+   "from_address": "priya@northwind-demo.example",
+   "from_name": "Priya Raman",
+   "sent_at": "2026-08-25T04:00:00+00:00",
+   "body_text": "hey \u2014 any luck on that PROJ-1421 renewal figure? finance are chasing me",
+   "web_link": "https://teams.microsoft.com/l/message/19:demo-chat/c01",
+   "is_from_operator": false,
+   "preceding_context": [
+    "Priya Raman: morning!",
+    "Kaan Turgut: morning"
+   ]
+  },
+  {
+   "id": "c02",
+   "chat_id": "19:demo-chat",
+   "from_address": "sam@demo.example",
+   "from_name": "Sam Ito",
+   "sent_at": "2026-08-25T08:00:00+00:00",
+   "body_text": "can you take a look soon-ish?",
+   "web_link": "https://teams.microsoft.com/l/message/19:demo-chat/c02",
+   "is_from_operator": false,
+   "preceding_context": [
+    "Sam Ito: pushed the onboarding deck to the shared drive",
+    "Sam Ito: it's the v3 one, ignore v2"
+   ]
+  },
+  {
+   "id": "c03",
+   "chat_id": "19:demo-chat",
+   "from_address": "jo@demo.example",
+   "from_name": "Jo Lindqvist",
+   "sent_at": "2026-08-24T07:00:00+00:00",
+   "body_text": "\ud83d\udc4d",
+   "web_link": "https://teams.microsoft.com/l/message/19:demo-chat/c03",
+   "is_from_operator": false,
+   "preceding_context": []
+  },
+  {
+   "id": "c04",
+   "chat_id": "19:demo-chat",
+   "from_address": "raj@demo.example",
+   "from_name": "Raj Patel",
+   "sent_at": "2026-08-24T06:00:00+00:00",
+   "body_text": "thanks!",
+   "web_link": "https://teams.microsoft.com/l/message/19:demo-chat/c04",
+   "is_from_operator": false,
+   "preceding_context": []
+  },
+  {
+   "id": "c05",
+   "chat_id": "19:demo-chat",
+   "from_address": "kaan@demo.example",
+   "from_name": "Kaan Turgut",
+   "sent_at": "2026-08-24T03:00:00+00:00",
+   "body_text": "leave the cert rotation with me, I'll sort it this week",
+   "web_link": "https://teams.microsoft.com/l/message/19:demo-chat/c05",
+   "is_from_operator": true,
+   "preceding_context": [
+    "Raj Patel: who's picking up the cert rotation?"
+   ]
+  },
+  {
+   "id": "c06",
+   "chat_id": "19:demo-chat",
+   "from_address": "sam@demo.example",
+   "from_name": "Sam Ito",
+   "sent_at": "2026-08-25T09:00:00+00:00",
+   "body_text": "no rush btw",
+   "web_link": "https://teams.microsoft.com/l/message/19:demo-chat/c06",
+   "is_from_operator": false,
+   "preceding_context": []
+  }
+ ],
+ "events": [
+  {
+   "id": "e01",
+   "subject": "Vendor sync \u2014 Northwind",
+   "start": "2026-08-27T14:00:00+00:00",
+   "end": "2026-08-27T15:00:00+00:00",
+   "organizer": "priya@northwind-demo.example",
+   "attendees": [
+    "kaan@demo.example"
+   ],
+   "body_text": "Agenda:\n1. PROJ-1421 renewal \u2014 Kaan to bring the confirmed number\n2. Q4 roadmap",
+   "is_all_day": false,
+   "is_cancelled": false,
+   "web_link": "https://outlook.office.com/calendar/item/e01"
+  },
+  {
+   "id": "e02",
+   "subject": "Budget review readout",
+   "start": "2026-08-28T10:00:00+00:00",
+   "end": "2026-08-28T11:30:00+00:00",
+   "organizer": "marcus@demo.example",
+   "attendees": [
+    "kaan@demo.example"
+   ],
+   "body_text": "Walkthrough of the revised headcount lines. Kaan \u2014 please have the revised numbers ready.",
+   "is_all_day": false,
+   "is_cancelled": false,
+   "web_link": "https://outlook.office.com/calendar/item/e02"
+  },
+  {
+   "id": "e03",
+   "subject": "1:1 Jo",
+   "start": "2026-08-26T11:00:00+00:00",
+   "end": "2026-08-26T11:30:00+00:00",
+   "organizer": "jo@demo.example",
+   "attendees": [
+    "kaan@demo.example"
+   ],
+   "body_text": "",
+   "is_all_day": false,
+   "is_cancelled": false,
+   "web_link": "https://outlook.office.com/calendar/item/e03"
+  },
+  {
+   "id": "e04",
+   "subject": "Sprint planning",
+   "start": "2026-08-26T15:00:00+00:00",
+   "end": "2026-08-26T16:30:00+00:00",
+   "organizer": "raj@demo.example",
+   "attendees": [
+    "kaan@demo.example"
+   ],
+   "body_text": "Standing session.",
+   "is_all_day": false,
+   "is_cancelled": false,
+   "web_link": "https://outlook.office.com/calendar/item/e04"
+  },
+  {
+   "id": "e05",
+   "subject": "All-hands",
+   "start": "2026-08-27T16:00:00+00:00",
+   "end": "2026-08-27T17:00:00+00:00",
+   "organizer": "comms@demo.example",
+   "attendees": [
+    "kaan@demo.example"
+   ],
+   "body_text": "Quarterly all-hands.",
+   "is_all_day": false,
+   "is_cancelled": false,
+   "web_link": "https://outlook.office.com/calendar/item/e05"
+  },
+  {
+   "id": "e06",
+   "subject": "Deep work \u2014 blocked",
+   "start": "2026-08-26T09:00:00+00:00",
+   "end": "2026-08-26T11:00:00+00:00",
+   "organizer": "kaan@demo.example",
+   "attendees": [
+    "kaan@demo.example"
+   ],
+   "body_text": "",
+   "is_all_day": false,
+   "is_cancelled": false,
+   "web_link": "https://outlook.office.com/calendar/item/e06"
+  }
+ ]
+}

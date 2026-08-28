@@ -1,0 +1,1 @@
+{"agent": "naive-baseline", "attempt": 1, "input_tokens": 1235, "latency_ms": 14948, "model": "gpt-5.5", "model_version": "2026-04-24", "output_tokens": 894, "prompt_hash": "bdf80762757ac6d90b44452ba8e791b5", "run_id": "20260823-145041", "validation_error": null}

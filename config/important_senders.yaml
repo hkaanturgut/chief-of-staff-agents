@@ -1,0 +1,27 @@
+# Sender importance, stated explicitly. Never inferred. See docs/decisions.md D-009.
+#
+# Inferring importance from interaction history was rejected: it is unreviewable, it
+# drifts between runs, and the operator must be able to open one file and understand
+# why an item ranked where it did. "Urgency is computed, not vibed" only holds if every
+# input to the computation is inspectable.
+#
+# weight is 0.0 to 1.0 and scales the sender_importance component in
+# config/settings.yaml. A sender absent from this file contributes zero — they are not
+# unimportant, they simply add nothing. An unknown sender with a real deadline still
+# ranks, because the deadline and multi-source components apply regardless.
+
+senders:
+  - match: "priya@northwind-demo.example"
+    weight: 1.0
+    note: "Owns the vendor relationship. If Priya is asking twice, it is real."
+  - match: "dana@northwind-demo.example"
+    weight: 0.9
+    note: "Signs off the renewal. Her asks change what the work is."
+  - match: "@meridian-demo.example"
+    weight: 0.9
+    note: "Billing. Anything from this domain is money and is time-bound."
+  - match: "marcus@demo.example"
+    weight: 0.7
+    note: "Owns the budget cycle."
+  - match: "legal@demo.example"
+    weight: 0.7

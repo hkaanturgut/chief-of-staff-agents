@@ -1,0 +1,104 @@
+[project]
+name = "chief-of-staff"
+version = "0.1.0"
+description = "Multi-agent Chief of Staff on Azure AI Foundry. Reads live M365, proposes actions, sends nothing without a merged PR."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [{ name = "Kaan Turgut" }]
+
+dependencies = [
+    # Orchestration. Take agent-framework-core and the Foundry provider directly rather
+    # than the `agent-framework` meta-package: that one pulls core[all], which is thirty
+    # provider packages including Bedrock, Gemini, and Ollama. None of them are used here
+    # and every one of them is a resolution constraint that can break the build the week
+    # of a talk.
+    #
+    # agent-framework-azure-ai is the OLD provider name, stranded at 1.0.0rc6. The current
+    # one is agent-framework-foundry. See research.md R-001.
+    "agent-framework-core>=1.15,<2",
+    "agent-framework-foundry>=1.11,<2",
+
+    # Upper bound is not caution, it is required: agent-framework-foundry pins
+    # azure-ai-projects<2.4.0, and azure-ai-projects>=2.5.0 requires openai>=3.0.0 while
+    # agent-framework-openai requires openai<3. Taking the newest of everything is
+    # unresolvable.
+    "azure-ai-projects>=2.2,<2.4",
+
+    # Two credential chains, deliberately. azure-identity for the Foundry control and
+    # data plane, msal for the Graph delegated flow. See research.md R-003.
+    "azure-identity>=1.25,<2",
+    "msal>=1.37,<2",
+    "msal-extensions>=1.2,<2",
+
+    # Graph v1.0 over a thin client rather than the generated SDK. See research.md R-004.
+    "httpx>=0.28,<1",
+
+    "pydantic>=2.13,<3",
+    "typer>=0.27,<1",
+    "structlog>=26,<27",
+    "python-ulid>=4,<5",
+    "PyYAML>=6,<7",
+    "python-frontmatter>=1.1,<2",
+    "python-dotenv>=1.1,<2",
+]
+
+[project.scripts]
+cos = "cos.cli:app"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<9",
+    "pytest-asyncio>=1,<2",
+    "ruff>=0.14",
+    "mypy>=1.18",
+    "types-PyYAML",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cos"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+# En and em dashes are used deliberately in prose and appear in real mail subjects.
+# Flagging them as confusable produces noise, not safety.
+allowed-confusables = ["–", "—"]
+
+[tool.mypy]
+python_version = "3.11"
+files = ["src/cos"]
+strict = true
+# The SDKs on the critical path ship incomplete stubs; typing our own code strictly
+# matters more than fighting theirs.
+[[tool.mypy.overrides]]
+module = [
+    "agent_framework.*",
+    "agent_framework_foundry.*",
+    "azure.*",
+    "msal.*",
+    "frontmatter.*",
+    "ulid.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# `live` needs a tenant, a network, and real model calls. Excluded by default so
+# the everyday suite stays offline and fast; run it with `pytest -m live`.
+addopts = "-q --strict-markers -m 'not live'"
+asyncio_mode = "auto"
+markers = [
+    "live: requires a real tenant and network. Excluded from CI by default.",
+]
+
+[tool.uv]
+package = true

@@ -1,0 +1,82 @@
+{
+  "additionalProperties": false,
+  "description": "What the consolidator's Stage B returns, for one candidate cluster.\n\nDeliberately narrow. It has no `urgency`, `due`, `sources`, or `id` field:\n\n- `urgency` is arithmetic in consolidate/rank.py (Constitution III).\n- `due` is carried forward from the merged signals, each of which took it from an\n  explicit statement in a source. Letting the merge step restate a date is how an\n  inferred deadline sneaks back in through the side door.\n- `sources` is the union of the inputs, assembled in code. A model asked to copy\n  source lists will eventually drop one, and provenance is not best-effort.\n- `id` is derived from content after the merge.\n\nThe model decides what is one ask and how to say it. Everything mechanical stays\nmechanical.",
+  "properties": {
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "detail": {
+      "default": "",
+      "title": "Detail",
+      "type": "string"
+    },
+    "merge": {
+      "description": "True if every signal in this cluster is the same ask.",
+      "title": "Merge",
+      "type": "boolean"
+    },
+    "needs_human_judgment": {
+      "default": false,
+      "title": "Needs Human Judgment",
+      "type": "boolean"
+    },
+    "owner": {
+      "description": "One of: me, delegate, waiting.",
+      "title": "Owner",
+      "type": "string"
+    },
+    "split_groups": {
+      "anyOf": [
+        {
+          "items": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "When merge is false, partition the input signal indices into the distinct asks they actually represent.",
+      "title": "Split Groups"
+    },
+    "statement": {
+      "description": "The merged ask, stated once, in the requester's terms.",
+      "title": "Statement",
+      "type": "string"
+    },
+    "suggested_action": {
+      "description": "One of: reply, schedule, delegate, create_issue, no_action.",
+      "title": "Suggested Action",
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 120,
+      "title": "Title",
+      "type": "string"
+    },
+    "urgency_reason": {
+      "description": "One sentence explaining the urgency score you were given. You are not setting the score; you are explaining it.",
+      "title": "Urgency Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "merge",
+    "statement",
+    "title",
+    "owner",
+    "suggested_action",
+    "confidence",
+    "urgency_reason"
+  ],
+  "title": "ClusterMerge",
+  "type": "object"
+}

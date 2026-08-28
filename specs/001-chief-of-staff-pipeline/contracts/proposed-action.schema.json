@@ -1,0 +1,301 @@
+{
+  "$defs": {
+    "ChatTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "chat_id": {
+          "minLength": 1,
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "chat_topic": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chat Topic"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "ChatTarget",
+      "type": "object"
+    },
+    "EventTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "attendees": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Attendees",
+          "type": "array"
+        },
+        "body": {
+          "default": "",
+          "title": "Body",
+          "type": "string"
+        },
+        "end": {
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        },
+        "start": {
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "subject": {
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subject",
+        "start",
+        "end"
+      ],
+      "title": "EventTarget",
+      "type": "object"
+    },
+    "IssueTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "labels": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Labels",
+          "type": "array"
+        },
+        "repo": {
+          "minLength": 1,
+          "title": "Repo",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repo",
+        "title"
+      ],
+      "title": "IssueTarget",
+      "type": "object"
+    },
+    "MailTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "cc": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Cc",
+          "type": "array"
+        },
+        "in_reply_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "In Reply To"
+        },
+        "subject": {
+          "default": "",
+          "title": "Subject",
+          "type": "string"
+        },
+        "to": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "To",
+          "type": "array"
+        }
+      },
+      "required": [
+        "to"
+      ],
+      "title": "MailTarget",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "description": "The unit of provenance. Nothing enters the pipeline without one.",
+      "properties": {
+        "author": {
+          "default": "",
+          "title": "Author",
+          "type": "string"
+        },
+        "author_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author Address"
+        },
+        "excerpt": {
+          "default": "",
+          "maxLength": 240,
+          "title": "Excerpt",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "mail",
+            "chat",
+            "calendar"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "permalink": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Permalink"
+        },
+        "thread_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Thread Id"
+        },
+        "timestamp": {
+          "format": "date-time",
+          "title": "Timestamp",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "timestamp"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "One concrete outbound act the system would perform. It never performs it.",
+  "properties": {
+    "body_markdown": {
+      "default": "",
+      "title": "Body Markdown",
+      "type": "string"
+    },
+    "id": {
+      "maxLength": 26,
+      "minLength": 26,
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "send_mail",
+        "reply_mail",
+        "create_event",
+        "post_chat",
+        "create_issue"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "rationale": {
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "risk": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "title": "Risk",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/SourceRef"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    },
+    "target": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MailTarget"
+        },
+        {
+          "$ref": "#/$defs/EventTarget"
+        },
+        {
+          "$ref": "#/$defs/ChatTarget"
+        },
+        {
+          "$ref": "#/$defs/IssueTarget"
+        }
+      ],
+      "title": "Target"
+    },
+    "todo_id": {
+      "maxLength": 26,
+      "minLength": 26,
+      "title": "Todo Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "todo_id",
+    "kind",
+    "risk",
+    "target",
+    "rationale",
+    "sources"
+  ],
+  "title": "ProposedAction",
+  "type": "object"
+}
