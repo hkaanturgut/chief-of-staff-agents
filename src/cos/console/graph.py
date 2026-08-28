@@ -163,9 +163,7 @@ def build(run_id: str) -> dict[str, Any]:
     return {
         "run_id": run_id,
         "nodes": ordered,
-        "edges": [
-            {"source": s, "target": t, "count": n} for (s, t), n in sorted(edges.items())
-        ],
+        "edges": [{"source": s, "target": t, "count": n} for (s, t), n in sorted(edges.items())],
         "calls": [
             {
                 "agent": c.agent,

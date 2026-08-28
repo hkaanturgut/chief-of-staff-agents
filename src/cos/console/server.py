@@ -30,6 +30,7 @@ STATIC = Path(__file__).parent / "static"
 
 ALLOWED_HOSTS = {"localhost", "127.0.0.1", "[::1]", "::1"}
 
+
 class ConsoleBindError(RuntimeError):
     """The console could not take its port. Reported as a sentence, not a traceback."""
 

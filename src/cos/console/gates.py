@@ -70,8 +70,14 @@ def whoami() -> str | None:
 def open_pulls(repo: str) -> list[dict[str, Any]]:
     """Pull requests this pipeline opened and a human has not yet merged — gate 1."""
     data = _gh_json(
-        "pr", "list", "--repo", repo, "--state", "open",
-        "--json", "number,title,headRefName,url,isDraft,mergeable",
+        "pr",
+        "list",
+        "--repo",
+        repo,
+        "--state",
+        "open",
+        "--json",
+        "number,title,headRefName,url,isDraft,mergeable",
     )
     return list(data or [])
 
@@ -84,17 +90,23 @@ def waiting_runs(repo: str) -> list[dict[str, Any]]:
     offers a button for.
     """
     data = _gh_json(
-        "run", "list", "--repo", repo, "--workflow", EXECUTE_WORKFLOW,
-        "--limit", "10", "--json", "databaseId,status,conclusion,displayTitle,url,createdAt",
+        "run",
+        "list",
+        "--repo",
+        repo,
+        "--workflow",
+        EXECUTE_WORKFLOW,
+        "--limit",
+        "10",
+        "--json",
+        "databaseId,status,conclusion,displayTitle,url,createdAt",
     )
     return [r for r in (data or []) if r.get("status") == "waiting"]
 
 
 def pending_environments(repo: str, run_db_id: int) -> list[dict[str, Any]]:
     """The environments a given run is blocked on, and whether *this* user may approve."""
-    data = _gh_json(
-        "api", f"repos/{repo}/actions/runs/{run_db_id}/pending_deployments"
-    )
+    data = _gh_json("api", f"repos/{repo}/actions/runs/{run_db_id}/pending_deployments")
     out = []
     for entry in data or []:
         env = entry.get("environment") or {}
@@ -140,11 +152,15 @@ def approve(repo: str, run_db_id: int, environment_id: int, comment: str) -> dic
     """
     _gh(
         "api",
-        "--method", "POST",
+        "--method",
+        "POST",
         f"repos/{repo}/actions/runs/{run_db_id}/pending_deployments",
-        "-f", f"environment_ids[]={environment_id}",
-        "-f", "state=approved",
-        "-f", f"comment={comment}",
+        "-f",
+        f"environment_ids[]={environment_id}",
+        "-f",
+        "state=approved",
+        "-f",
+        f"comment={comment}",
     )
     log.info("environment approved", repo=repo, run=run_db_id, environment=environment_id)
     return {"approved": True, "run": run_db_id, "environment_id": environment_id}
