@@ -79,6 +79,23 @@ only the sentence explaining the number it was handed.
 no new UI to teach, and git supplies the audit trail of what the agent proposed versus what
 a human changed for free.
 
+## The console
+
+```bash
+uv run cos console
+```
+
+A local view of one run: the delegation graph, every model call placed on a real
+timeline, the ranked brief, the pending drafts, and both gates with their live state.
+
+The approve button is the part worth reading the code for. It shells out to **your** `gh`
+credential — the same call github.com makes when you click Approve on the environment. The
+console carries no token of its own, and `tests/test_console.py` fails the build if anyone
+ever gives it one. Moving the *interface* somewhere friendlier is safe. Moving the *gate*
+inside the agent's reach would not be, so it stays where it is: the Azure token that
+permits a send is issued by GitHub only after a human approval, and nothing in the pipeline
+can mint one.
+
 ## What stops it emailing a real person
 
 Four things, and you can read all of them:

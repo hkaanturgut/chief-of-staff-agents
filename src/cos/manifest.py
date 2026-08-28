@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
@@ -54,6 +55,15 @@ class RunRecorder:
     counts: dict[str, int] = field(default_factory=dict)
     calls: list[ModelCallLog] = field(default_factory=list)
 
+    # Monotonic, because the timeline must survive a clock adjustment mid-run. Wall time
+    # is kept separately in `started_at` for the manifest; this one is only ever used to
+    # place calls relative to each other.
+    _origin: float = field(default_factory=time.monotonic, repr=False)
+
+    def elapsed_ms(self) -> int:
+        """Milliseconds since the run began. Stamped on a call before it is issued."""
+        return round((time.monotonic() - self._origin) * 1000)
+
     def count(self, key: str, value: int) -> None:
         self.counts[key] = value
 
@@ -72,6 +82,10 @@ class RunRecorder:
         latency_ms: int,
         attempt: int = 1,
         validation_error: str | None = None,
+        stage: str = "",
+        parent: str | None = None,
+        label: str | None = None,
+        started_ms: int = 0,
     ) -> ModelCallLog:
         entry = ModelCallLog(
             run_id=self.run_id,
@@ -84,6 +98,10 @@ class RunRecorder:
             latency_ms=latency_ms,
             attempt=attempt,
             validation_error=validation_error,
+            stage=stage,
+            parent=parent,
+            label=label,
+            started_ms=started_ms,
         )
         self.calls.append(entry)
         with run_log_path(self.run_id).open("a", encoding="utf-8") as fh:

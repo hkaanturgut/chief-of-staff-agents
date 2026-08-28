@@ -98,12 +98,20 @@ class AgentRunner:
         instructions: str,
         prompt: str,
         schema: type[T],
+        stage: str = "",
+        parent: str | None = None,
+        label: str | None = None,
     ) -> T:
         """Call a model and return validated output, or raise.
 
         `agent` is the logical agent name — `mail-triage`, `consolidator` — not the
         deployment. It is what appears in the run log, so a cost breakdown reads in terms
         of the architecture rather than in terms of model names.
+
+        `stage`, `parent`, and `label` are what turn the run log into a delegation graph
+        rather than a flat list of calls. They are descriptive only: nothing in the
+        pipeline branches on them, so a caller that omits them still gets identical
+        behaviour and merely a thinner picture in the console.
         """
         client = self._client(tier)
         options = ChatOptions(response_format=schema, instructions=instructions)
@@ -112,6 +120,7 @@ class AgentRunner:
         last_error: ValidationError | None = None
 
         for attempt in range(1, MAX_ATTEMPTS + 1):
+            started_ms = self._recorder.elapsed_ms()
             started = time.perf_counter()
             response = await client.get_response(message, options=options)
             latency_ms = round((time.perf_counter() - started) * 1000)
@@ -134,6 +143,10 @@ class AgentRunner:
                     latency_ms=latency_ms,
                     attempt=attempt,
                     validation_error=str(exc)[:2000],
+                    stage=stage,
+                    parent=parent,
+                    label=label,
+                    started_ms=started_ms,
                 )
                 log.warning(
                     "structured output failed validation",
@@ -161,6 +174,10 @@ class AgentRunner:
                 output_tokens=output_tokens,
                 latency_ms=latency_ms,
                 attempt=attempt,
+                stage=stage,
+                parent=parent,
+                label=label,
+                started_ms=started_ms,
             )
             log.info(
                 "model call",

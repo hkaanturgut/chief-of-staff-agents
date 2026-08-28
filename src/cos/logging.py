@@ -48,3 +48,14 @@ def get_logger(name: str) -> Any:
 def run_log_path(run_id: str) -> Path:
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
     return RUNS_DIR / f"{run_id}.jsonl"
+
+
+def run_brief_path(run_id: str) -> Path:
+    """The machine-readable twin of BRIEF.md, for the console.
+
+    BRIEF.md is written for a human and for a pull request diff. Parsing it back would
+    make the console depend on the exact shape of prose, so the same data is emitted once
+    as JSON alongside the run log instead.
+    """
+    RUNS_DIR.mkdir(parents=True, exist_ok=True)
+    return RUNS_DIR / f"{run_id}.brief.json"

@@ -354,6 +354,35 @@ def replay(run_id: Annotated[str, typer.Argument(help="A run id under state/runs
     raise typer.Exit(_todo("replay", "T015"))
 
 
+@app.command()
+def console(
+    port: Annotated[int, typer.Option("--port", help="Port to listen on.")] = 7378,
+    no_browser: Annotated[
+        bool, typer.Option("--no-browser", help="Do not open a browser.")
+    ] = False,
+) -> None:
+    """Open the operator console: the delegation view, the brief, and the two gates.
+
+    The console reads runs from state/runs/ and drafts from outbox/pending/. Its approve
+    button operates the protected `send` environment through your own `gh` credential —
+    it holds no authority the person running it does not already have.
+    """
+    from cos.console.server import ConsoleBindError, serve
+    from cos.settings import load_settings
+
+    settings = load_settings()
+    try:
+        serve(
+            repo=settings.github.repo,
+            dry_run=settings.run.dry_run,
+            port=port,
+            open_browser=not no_browser,
+        )
+    except ConsoleBindError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+
+
 def _todo(command: str, tasks: str) -> int:
     log.error("command not implemented", command=command, tasks=tasks)
     typer.echo(f"`cos {command}` is {NOT_BUILT} — see tasks {tasks}.", err=True)
